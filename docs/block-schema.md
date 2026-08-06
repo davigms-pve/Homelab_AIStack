@@ -12,7 +12,9 @@ blocks/<block-name>/
 └── PLACEHOLDERS.md     — a find-and-replace map: each fake value in AGENTS.md.example, what it means, where yours comes from
 ```
 
-Discovery topics under `discovery/` follow the same triple, minus the `blocks/` nesting — they're decision-only, not domain-specific, but the CEP structure is identical.
+Discovery topics under `discovery/` use the same CEP method in lighter packaging: because they're decision-only — there's no infrastructure to execute against and so no instruction file to hand an agent — each topic carries its checklist, worked example, and placeholder note as **sections inside a single file** rather than as four separate ones. `discovery/` still has its own `README.md` as the human entry point, per the rule below.
+
+Two of the three discovery topics legitimately have nothing to swap, and say so explicitly in their Placeholders section. "No placeholders, and here's why" is a complete answer; silence is not.
 
 ## `requires:`
 

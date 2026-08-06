@@ -8,7 +8,9 @@ A set of reusable AI-agent instruction templates that help an AI assistant guide
 
 ## The one rule that matters most
 
-Every template (a "block") ships as a **CEP triple**: a **C**hecklist of what an agent needs to know, a filled **E**xample using fake-but-realistic values, and the **P**laceholder convention for swapping them. A block missing any of the three is incomplete — see `docs/block-schema.md`. Generic prose with blanks is not useful to an agent; do not add one without the other two parts.
+Every template (a "block") ships as a **CEP triple**: a **C**hecklist of what an agent needs to know, a filled **E**xample using fake-but-realistic values, and a **P**laceholders map saying what to find-and-replace. A block missing any of the three is incomplete — see `docs/block-schema.md`.
+
+The **E** is the part that gets hollowed out by accident. A filled example means realistic values written inline, exactly where a real value would go — `pve1`, `01:00.0`, VM `105` — so the file reads as somebody's finished, working `AGENTS.md`. An example full of `<<NODE_NAME>>` tokens is the generic-prose-with-blanks failure this whole repo argues against, wearing the right filename. If you can't read it start to finish as a real file, it isn't done.
 
 ## Conventions
 
