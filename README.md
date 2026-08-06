@@ -1,6 +1,6 @@
 # Homelab AI Stack
 
-> **Status: pre-1.0, work in progress.** The structure is real and readable, but **no block has been validated against real hardware yet** — both currently ship marked `unverified`. Nothing here is a finished, tested product. Open gaps are tracked as a running list in [`docs/roadmap.md`](docs/roadmap.md), including what `1.0` would actually require.
+> **Status: pre-1.0, work in progress.** The structure is real and readable, but **no block has been validated against real hardware yet** — all three currently ship marked `unverified`. Nothing here is a finished, tested product. Open gaps are tracked as a running list in [`docs/roadmap.md`](docs/roadmap.md), including what `1.0` would actually require.
 >
 > **This affects real infrastructure.** Read [`DISCLAIMER.md`](DISCLAIMER.md) before following any block — it covers what these templates can't fully protect you from (data loss, downtime, hardware misconfiguration) and why the safety cadence lowers that risk without removing it.
 
@@ -42,7 +42,7 @@ docs/                             — methodology, block schema, manifest schema
 
 ## Verification status
 
-Both blocks currently ship **unverified** — the structure, checklists, and cadences are deliberate, but neither has been dogfooded end-to-end against real hardware yet, and each says so in its own `README.md` and in its `AGENTS.md.example` frontmatter. This repo would rather label that honestly than imply a test that hasn't happened.
+All three blocks — both foundation blocks and the flagship domain block — currently ship **unverified**. The structure, checklists, and cadences are deliberate, but none has been dogfooded end-to-end against real hardware yet, and each says so in its own `README.md` and in its `AGENTS.md.example` frontmatter. This repo would rather label that honestly than imply a test that hasn't happened.
 
 Concretely, that means: trust the shape and the safety cadence, treat the exact commands as a starting point to check against current official docs. See [`docs/methodology.md`](docs/methodology.md) for how validation works and [`docs/roadmap.md`](docs/roadmap.md) for what's needed to close this out.
 

@@ -4,9 +4,9 @@ Format: one entry per phase/version tag, per the build cadence in [`docs/roadmap
 
 Versioning is pre-1.0 `0.x.y`. `1.0` requires at least one path dogfooded end-to-end against real hardware — see the versioning section in the roadmap for what that means concretely.
 
-## [Unreleased] — pre-0.1.0
+## [0.3.0] — 2026-08-06
 
-Everything below is built but untagged. No version has been declared working yet: both blocks ship `unverified`, and the open gaps are tracked in [`docs/roadmap.md`](docs/roadmap.md).
+First tagged release. Phases 0–3, 5, and 7 of the build cadence landed together on one branch rather than at separate commits, so they close under a single tag — see the phase table in [`docs/roadmap.md`](docs/roadmap.md). This is a `0.x` release in the sense the versioning policy defines: the structure is real and usable, but all three blocks ship `unverified` and the open gaps are tracked in the roadmap.
 
 ### Added
 - Repo hygiene: `LICENSE` (MIT), `.gitignore`, `CONTRIBUTING.md`, root `AGENTS.md` / `CLAUDE.md`.
@@ -39,3 +39,8 @@ Everything below is built but untagged. No version has been declared working yet
 - `requires:` fields across all blocks now use tiered paths (`foundation/host-platform`, `foundation/network`) instead of bare names. `.homelab-state.yml`'s `blocks:` keys deliberately stay flat — see `docs/manifest-schema.md` for why the two are different shapes.
 - All relative links inside moved blocks' `AGENTS.md.example` files corrected for the new directory depth (`../../docs/` → `../../../docs/`).
 - `docs/block-schema.md`, `docs/roadmap.md`, `README.md`, `CONTRIBUTING.md`, `discovery/README.md`, and both foundation blocks' own cross-references updated to match.
+
+### Fixed (release-prep pass, 2026-08-06)
+- `README.md` and this file still said "both blocks" and "neither" after `blocks/foundation/network/` was added in the tiering pass, undercounting the blocks that ship unverified. All three are now counted. `docs/roadmap.md`'s "both foundation blocks" phrasings were left alone — there really are exactly two of those.
+- `docs/roadmap.md`'s phase table promised a tag per phase (`v0.1.0` / `v0.2.0` / `v0.3.0`), which the git history can't support: phases 0–3, 5, and 7 landed inside two commits on one branch. The table now records that they close together under `v0.3.0`, and says why.
+- `docs/roadmap.md` open gap #6 ("No version tags in git") closed and moved to the Closed list.
