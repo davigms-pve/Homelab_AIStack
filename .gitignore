@@ -1,0 +1,22 @@
+# Secrets and environment
+.env
+.env.*
+*.env
+!*.env.example
+
+# Local agent settings (personal paths/permissions, never shared)
+.claude/settings.local.json
+
+# A cloned user's own tracking state should never land back in this repo
+.homelab-state.yml
+HOMELAB.md
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor cruft
+.vscode/
+.idea/
+*.swp

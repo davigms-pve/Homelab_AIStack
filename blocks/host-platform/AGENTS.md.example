@@ -1,0 +1,71 @@
+---
+last-verified: unverified
+verified-against: n/a
+---
+
+# Host platform — filled example
+
+**Status: unverified.** This block is a decision layer, so there's less to execute than in a domain block — but it hasn't been walked end-to-end with a real person on real hardware yet. See the gap list in [`../../docs/roadmap.md`](../../docs/roadmap.md). Treat the shape and cadence as reliable; confirm install specifics against current official docs.
+
+**Every value below is fake but realistic.** This reads as a finished decision record, not a form — so you can see what a completed one looks like. To adapt it, find-and-replace the values using [`PLACEHOLDERS.md`](PLACEHOLDERS.md).
+
+## What discovery produced
+
+- **Wants:** `[ai-stack, media]`, priority `ai-stack`. Media is wanted later, not now.
+- **Comfort level:** `beginner-docker` — has run `docker compose` from a tutorial, has never used a hypervisor.
+- **Budget band:** `under-1000`. Apartment, so quiet matters; closet shelf, so no rackmount.
+- **Hardware envelope:** 6–8 cores, 32GB RAM, one discrete GPU with 12GB VRAM, 2+ drive bays, low idle power.
+
+## The decision
+
+**Proxmox**, chosen over bare Docker on Debian.
+
+The reasoning, recorded because it's the part worth re-reading in six months: two workloads are wanted, not one, and they have genuinely different failure profiles — an AI stack that gets restarted and re-tuned constantly, and a media stack that should just keep running. VM isolation means experimenting on one can't take down the other. The GPU was the tiebreaker: passing it through to a single dedicated VM is cleaner than sharing one card across containers on a bare host, and it keeps the option of moving the AI VM to different hardware later without rebuilding it.
+
+The cost was acknowledged openly: a `beginner-docker` comfort level plus a hypervisor means IOMMU config and virtual networking are both new. That's a real learning curve, accepted deliberately rather than stumbled into. Had only the AI stack been wanted, bare Docker on Debian would have been the right call and this block would have said so — Proxmox is not the default here.
+
+## Cadence
+
+Up to and including the decision above, this is the **Discovery & Advisory Cadence** ([`../../docs/methodology.md`](../../docs/methodology.md)) — work the checklist one question at a time, confirm, then write the result to `.homelab-state.yml` and `HOMELAB.md` immediately.
+
+Installing the OS is a hand-off, not an agent action: BIOS settings, IOMMU enablement, and the Proxmox installer all happen at the physical machine or its console, where the agent has no access. Its job here is to explain each step and what to check — never to claim it executed something it couldn't reach.
+
+Once Proxmox is installed and reachable over SSH or the API, the agent says so explicitly and switches to the **Agent Operating Cadence** for everything after. That switch is the boundary; it should be stated out loud, not assumed.
+
+## Worked interaction
+
+> **Agent:** Discovery points at Proxmox — two workloads with different failure profiles, and you want the GPU dedicated to one of them. Before anything gets installed: does your CPU and motherboard support IOMMU? On Intel that's VT-d, on AMD it's AMD-Vi, and it's usually under CPU or Advanced settings in the BIOS. Without it, GPU passthrough won't work at all, and that would change this decision rather than just delay it.
+>
+> *(human checks, finds and enables VT-d)*
+>
+> **Agent:** Good — that confirms the Proxmox path is viable. Writing the decision and the reasoning to `.homelab-state.yml` and `HOMELAB.md` now, before we go further, so it's recorded even if we stop here.
+>
+> Next: download the Proxmox VE ISO from the official source (`proxmox.com/en/downloads`), write it to a USB drive, and boot from it. I'll walk the installer with you — tell me what screen you're on. The one screen worth slowing down on is disk selection, since that's where an existing drive can get wiped.
+>
+> *(after install)*
+>
+> **Agent:** Proxmox is up. What hostname or IP did it land on? Once I can reach it over SSH or the API I'll switch to reading actual node state before we touch anything — that's execution mode, and I'll confirm before every change from that point on.
+
+## Recording the decision
+
+Written together, at confirmation — never batched. See [`../../docs/manifest-schema.md`](../../docs/manifest-schema.md).
+
+```yaml
+# .homelab-state.yml
+blocks:
+  host-platform: done
+decisions:
+  host_platform: proxmox
+  gpu_passthrough: true
+```
+
+```markdown
+<!-- HOMELAB.md -->
+### 2026-08-06
+Chose Proxmox over bare Docker on Debian. Two workloads are planned (AI
+now, media later) and VM isolation means experimenting on one can't take
+down the other. The GPU decided it: passing one card through to a
+dedicated VM beats sharing it across containers on a bare host. Accepted
+cost: hypervisor networking and IOMMU are both new to me. VT-d confirmed
+enabled in BIOS; install completed on node pve1.
+```
