@@ -19,6 +19,7 @@ The **E** is the part that gets hollowed out by accident. A filled example means
 - Any link to a runnable stack must point at an official/vendor source (see `CONTRIBUTING.md`). Never link a third-party reimplementation.
 - Discovery and hardware/tooling guidance state *criteria*, never brand rankings or specific model picks — those go stale in months.
 - `docs/methodology.md` is the single source for the Discovery & Advisory Cadence and the Agent Operating Cadence. Reference it from blocks; never restate it.
+- `DISCLAIMER.md` states the risk this whole methodology exists to manage, and the Agent Operating Cadence's step 0 (standing methodology agreement) applies regardless of harness auto-approval settings. Don't weaken either without understanding why they're there.
 
 ## Full conventions
 

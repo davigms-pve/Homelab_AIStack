@@ -20,8 +20,8 @@ The agent should follow the **Discovery & Advisory Cadence** in [`../docs/method
 
 A small set of confirmed decisions — which categories you want, your priority order, your comfort level, your constraints, and a hardware spec envelope — written as you go into two files in **your own** repo: `.homelab-state.yml` (machine-readable) and `HOMELAB.md` (plain language, including *why* you chose things). See [`../docs/manifest-schema.md`](../docs/manifest-schema.md).
 
-Those decisions are what [`../blocks/host-platform/`](../blocks/host-platform/) reads next to decide what actually runs on the metal.
+Those decisions are what [`../blocks/foundation/host-platform/`](../blocks/foundation/host-platform/) and [`../blocks/foundation/network/`](../blocks/foundation/network/) read next, to decide what actually runs on the metal and how it's networked.
 
 ## A note on shape
 
-These three files aren't a four-file block like the ones under `blocks/` — they're decision-only, so each one carries its checklist, a worked example, and its placeholder note as sections inside a single file. Same CEP method, lighter packaging. See [`../docs/block-schema.md`](../docs/block-schema.md).
+These three files aren't a four-file block like the ones under `blocks/foundation/` and `blocks/domains/` — they're decision-only, so each one carries its checklist, a worked example, and its placeholder note as sections inside a single file. Same CEP method, lighter packaging. See [`../docs/block-schema.md`](../docs/block-schema.md).

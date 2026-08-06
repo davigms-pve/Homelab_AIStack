@@ -1,12 +1,15 @@
 # Proxmox + AI stack
 
-requires: [host-platform]
+requires: [foundation/host-platform, foundation/network]
+
+*Domain-tier block — see `docs/block-schema.md` for what that means.*
 
 This repo's first fully-realized domain block: Proxmox VM/LXC setup with GPU passthrough, running a local AI stack (LLM inference plus a chat interface) on top. It's the flagship example because it's heavier and more failure-prone than a docker-only setup — isolation, passthrough, and networking all have to work together — so it demonstrates the CEP method and the Agent Operating Cadence somewhere they actually get exercised.
 
 ## Scope
 
-- Creating a VM (or LXC, where GPU passthrough allows it) on an already-installed Proxmox host (see `blocks/host-platform/` — this block assumes that decision is already made and recorded).
+- Creating a VM (or LXC, where GPU passthrough allows it) on an already-installed Proxmox host (see `blocks/foundation/host-platform/` — this block assumes that decision is already made and recorded).
+- Attaching that VM to the segment `blocks/foundation/network/` already decided — this block doesn't make its own networking decisions, only asks for the VM-specific address within whatever topology network/ produced.
 - Passing a GPU through to that VM for local inference.
 - Installing Docker inside the VM and deploying an LLM runtime plus a chat interface on top.
 - What the agent must never touch: other VMs on the same node, storage pools already in use by other workloads, the Proxmox host's own network config beyond what this VM needs.

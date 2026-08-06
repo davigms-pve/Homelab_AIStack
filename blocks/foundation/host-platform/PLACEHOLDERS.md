@@ -6,7 +6,7 @@ To make it yours: copy it, then replace each value below with your own.
 
 | Fake value in the example | What it means | Where yours comes from |
 |---|---|---|
-| `proxmox` | The platform actually chosen | Your own answer — `bare-docker`, `proxmox`, `xcp-ng`, or whatever you land on |
+| `proxmox` | The platform actually chosen | Your own answer, on whichever axis drove it — `bare-docker`, `proxmox`, `xcp-ng`, `truenas-scale`, `openmediavault`, `casaos`, or whatever you land on |
 | `[ai-stack, media]`, priority `ai-stack` | What you want to run, and what comes first | `discovery/needs.md` |
 | `beginner-docker` | Your stated technical comfort level | `discovery/needs.md` — be honest, it changes the recommendation |
 | `under-1000`, apartment, closet shelf | Budget and physical constraints | `discovery/needs.md` |

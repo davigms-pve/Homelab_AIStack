@@ -14,11 +14,15 @@ Current snapshot only, overwritten as state changes:
 blocks:
   discovery: done
   host-platform: done
+  network: done
   proxmox-ai-stack: in-progress
   media: excluded
   home-automation: planned
 
 decisions:
+  # recorded once, by Agent Operating Cadence step 0 — never re-asked once true
+  methodology_agreed: true
+
   # from discovery/needs.md
   wants: [ai-stack, media]
   priority: ai-stack
@@ -35,21 +39,34 @@ decisions:
     drive_bays: 2
     idle_power_w: 35
 
-  # from blocks/host-platform/
+  # from blocks/foundation/host-platform/
   host_platform: proxmox
   gpu_passthrough: true
   storage_layout: zfs-mirror
-  network_scheme: single-vlan
 
-  # from blocks/proxmox-ai-stack/
+  # from blocks/foundation/network/
+  network_scheme: segmented-vlan
+  vlans:
+    - id: 10
+      name: servers
+      subnet: 192.0.2.0/24
+    - id: 20
+      name: iot
+      subnet: 198.51.100.0/24
+  bridge_mapping:
+    vmbr0.10: servers
+
+  # from blocks/domains/proxmox-ai-stack/
   ai_vm_id: 105
 ```
 
-Status values: `excluded`, `planned`, `in-progress`, `done`.
+Status values: `excluded`, `planned`, `in-progress`, `done`. The `blocks:` map uses short, flat, unique names — not the tiered folder paths (`blocks/foundation/host-platform/` etc.) that `requires:` uses elsewhere. It only needs to track status, and every block name is already unique across tiers, so there's nothing to gain from making it mirror the directory structure. See `docs/block-schema.md` for why `requires:` and `blocks:` are deliberately different shapes.
 
 **Field names are set by the block that produces them,** and every block states which keys it writes. The list above is the union of what the blocks in this repo currently produce — a new block adds its own keys under `decisions:` and documents them in its own `CHECKLIST.md`. Nothing here is required to exist before the block that produces it has run; a mid-discovery state file is legitimately partial.
 
 `blocks: discovery` is tracked as one entry even though `discovery/` holds three topics — it flips to `done` when all three have been worked through. Individual topics don't get their own status; they're too small to be independently resumable. An agent reads this file first, every session, as step 1 of the Agent Operating Cadence ("read current state") — this is what lets it pick up where things left off instead of re-interviewing.
+
+**`methodology_agreed` is checked even earlier, at step 0**, before state is even read. It's the one field in this schema that isn't produced by a block — it's produced by the standing agreement described in `methodology.md`, obtained once and never silently skipped, regardless of whether the surrounding tool or harness auto-approves actions. `HOMELAB.md` gets a matching one-line log entry the first time it's recorded, the same way any other decision does.
 
 ## `HOMELAB.md` — human narrative
 

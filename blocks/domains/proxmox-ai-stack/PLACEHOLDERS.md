@@ -17,7 +17,7 @@ To make it yours: copy it to `AGENTS.md` in your own repo, then find-and-replace
 | `8` vCPUs / `32GB` RAM | Resources allocated to the AI VM | Your hardware envelope from `discovery/hardware-envelope.md`, not a guess |
 | `local-zfs` | Storage pool for the VM's disk | Your pool name, from Datacenter → Storage in the web UI |
 | `tank` | A pool in use by something else, off-limits | Your own other pools, if any |
-| `vmbr0` | Network bridge the VM attaches to | Your bridge name, from the node's Network tab |
+| `vmbr0.10` | Network bridge the VM attaches to | From `blocks/foundation/network/`'s `decisions.bridge_mapping` — not chosen in this block |
 | `192.0.2.105` | The AI VM's address | Your own IP or DHCP reservation. `192.0.2.0/24` is a reserved documentation range and will not work on a real network |
 | `2026-08-06` | Date of the log entry | The actual date you did it |
 

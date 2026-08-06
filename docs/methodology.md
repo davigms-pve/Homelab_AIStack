@@ -2,6 +2,8 @@
 
 This is the one place these rules are written. Every block references this file rather than restating it — that's what keeps individual `AGENTS.md.example` files short enough to actually work as agent context.
 
+See [`../DISCLAIMER.md`](../DISCLAIMER.md) for the risk this methodology exists to manage — real infrastructure, real consequences, no warranty.
+
 ## The CEP method
 
 A generic instruction file ("describe your Proxmox cluster here") gives an agent nothing to act on. Good agent instructions are short, specific, and written for one real environment. So every block in this repo ships as three parts:
@@ -18,7 +20,7 @@ These get blurred together easily but they govern opposite things: one is about 
 
 ### Discovery & Advisory Cadence
 
-Governs any decision-only stage — `discovery/`, `blocks/host-platform/`, or any future block that's about choosing rather than doing.
+Governs any decision-only stage — `discovery/`, `blocks/foundation/` blocks, or any future block that's about choosing rather than doing.
 
 1. **One question or topic at a time.** Never front-load an entire checklist as a form. Ask, listen, let the answer shape what's asked next.
 2. **Calibrate to stated comfort level immediately.** The first thing discovery should establish is how technical the person is, and every later question adjusts its own depth and jargon to match.
@@ -32,9 +34,10 @@ Governs any decision-only stage — `discovery/`, `blocks/host-platform/`, or an
 
 Governs any stage where the agent is acting on real infrastructure, where a wrong `docker compose down` or a deleted VM costs real uptime or data.
 
+0. **Confirm the standing methodology agreement is on record.** Before anything else, check `.homelab-state.yml` for `decisions.methodology_agreed`. If it's not there: present the terms plainly — the stop-and-confirm gate is non-negotiable, a safer path (backup or sandbox) will be suggested before risky changes where one exists, and point at `DISCLAIMER.md` for the full risk picture — then get explicit human agreement before proceeding with anything else. Record it once (`decisions.methodology_agreed: true` plus a one-line `HOMELAB.md` log entry) so later sessions don't re-ask, but this check itself never gets skipped. This applies **regardless of whether the surrounding tool or harness auto-approves actions** — it's a textual gate this repo's instructions require, not a substitute for one, and it holds even when nothing external is prompting for confirmation. See `DISCLAIMER.md` for why this matters independent of any particular tool's settings.
 1. **Read current state first** — inspect actual state (`docker ps`, compose file contents, node list, `.homelab-state.yml`) before proposing anything. Never assume.
 2. **Summarize understanding back** — state what was found before acting, so a human can catch a wrong read.
-3. **Propose a plan** — for anything beyond a read-only query, state the exact commands or changes before running them.
+3. **Propose a plan — and propose the safer path alongside it.** For anything beyond a read-only query, state the exact commands or changes before running them. Before a state-changing action, also check whether a snapshot/backup of what's about to change is possible, and whether a sandboxed or test-first version exists (a throwaway VM/container, a dry-run flag, applying to a non-critical resource first) — offer it as part of the same proposal. This isn't a one-time check: it applies every time something is about to be built or altered, not just at the start of a session. If no safer path exists for this particular action, say so explicitly rather than silently skipping the question.
 4. **Stop-and-confirm gate** — explicit human confirmation before any state-changing action. Non-negotiable before anything destructive or hard to reverse (deletes, restarts, `down`).
 5. **Execute one step at a time** — no multi-step batches without a checkpoint in between.
 6. **Verify** — check the actual result (service healthy, container up, VM running) rather than assuming success.

@@ -19,8 +19,10 @@ Everything here should be resolved and recorded in `.homelab-state.yml` before t
 
 ## Networking
 
-- **VLAN / bridge** — which Proxmox network bridge the VM attaches to, and whether it needs its own VLAN for isolation from other homelab traffic.
-- **Static IP or DHCP reservation** — how the VM will be reachably addressed for SSH/API access after creation.
+This block doesn't decide network topology — `blocks/foundation/network/` already did. Read its output from `.homelab-state.yml` (`decisions.bridge_mapping`, `decisions.vlans`) rather than asking these questions fresh:
+
+- **Which bridge does this VM attach to?** — from `decisions.bridge_mapping`, not chosen here.
+- **Static IP or DHCP reservation** — the addressing *approach* (static vs. DHCP-with-reservation) comes from `network/`'s decision; this block only needs the specific address this VM gets within it.
 
 ## VM configuration
 

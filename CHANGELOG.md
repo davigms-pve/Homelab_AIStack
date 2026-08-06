@@ -14,8 +14,9 @@ Everything below is built but untagged. No version has been declared working yet
 - `docs/index.md`, `docs/block-schema.md`, `docs/manifest-schema.md`.
 - `docs/roadmap.md` — build cadence (phases 0–7), pre-1.0 versioning policy, the three tracking metrics, and the running list of open gaps.
 - `discovery/` — needs, hardware-envelope, and AI-tooling discovery as CEP triples, plus a `README.md` human entry point.
-- `blocks/host-platform/` — foundation block (decision layer: bare OS vs. Proxmox vs. other hypervisor).
-- `blocks/proxmox-ai-stack/` — first domain block, currently unverified.
+- `blocks/foundation/host-platform/` — foundation block (decision layer: isolation-, storage-, simplicity-, or raw-control-first).
+- `blocks/foundation/network/` — foundation block (topology, addressing, bridge mapping).
+- `blocks/domains/proxmox-ai-stack/` — first domain block, currently unverified.
 - `.github/` issue and PR templates.
 
 ### Fixed (review pass, 2026-08-06)
@@ -25,3 +26,16 @@ Everything below is built but untagged. No version has been declared working yet
 - `blocks/proxmox-ai-stack/CHECKLIST.md` was missing four facts an agent would have been blocked on: how it reaches the host, the single-GPU console-lockout risk, the `q35` + OVMF requirement, and in-VM GPU driver plus container-runtime setup.
 - `docs/manifest-schema.md` documented four `decisions:` keys while `discovery/` instructed agents to write ten others verbatim.
 - References to a "build cadence" and "planning history" pointed at a plan file that doesn't exist in the repo. They now resolve to `docs/roadmap.md`.
+
+### Added (safety + scope pass, 2026-08-06)
+- `DISCLAIMER.md` — real-infrastructure risk (data loss, downtime, hardware misconfiguration) and third-party script execution risk, separate from `LICENSE`'s legal terms.
+- Agent Operating Cadence step 0 — a standing methodology agreement, recorded once in `.homelab-state.yml`/`HOMELAB.md`, checked before any execution regardless of whether the surrounding harness auto-approves actions.
+- Agent Operating Cadence step 3 extended — an agent must propose the safer path (backup/snapshot, sandbox, or test-first) alongside any state-changing action, every time, not just once per session.
+- `blocks/foundation/host-platform/` broadened from a single isolation-vs-not fork to four decision axes (isolation, storage/ZFS, simplicity, raw-control), each with illustrative-only platform examples and no ranking — closes a real gap where the block funneled every path toward Proxmox regardless of what the person actually wanted.
+
+### Changed (tiering pass, 2026-08-06)
+- `blocks/` reorganized into three tiers: `foundation/` (decisions nearly everything depends on), `core-services/` (shared services — named in `docs/block-schema.md`, not yet built), `domains/` (end-user-facing workloads). Moved via `git mv` to preserve history: `blocks/host-platform/` → `blocks/foundation/host-platform/`, `blocks/proxmox-ai-stack/` → `blocks/domains/proxmox-ai-stack/`.
+- Added `blocks/foundation/network/` as a new CEP triple — topology, addressing, and bridge mapping. Closes a real bug: `blocks/domains/proxmox-ai-stack/CHECKLIST.md` previously asked "which VLAN/bridge" as if it were that block's own decision, with no block actually owning network topology.
+- `requires:` fields across all blocks now use tiered paths (`foundation/host-platform`, `foundation/network`) instead of bare names. `.homelab-state.yml`'s `blocks:` keys deliberately stay flat — see `docs/manifest-schema.md` for why the two are different shapes.
+- All relative links inside moved blocks' `AGENTS.md.example` files corrected for the new directory depth (`../../docs/` → `../../../docs/`).
+- `docs/block-schema.md`, `docs/roadmap.md`, `README.md`, `CONTRIBUTING.md`, `discovery/README.md`, and both foundation blocks' own cross-references updated to match.

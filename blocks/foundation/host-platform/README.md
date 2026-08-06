@@ -1,0 +1,28 @@
+# Host platform
+
+requires: [discovery]
+
+*Foundation-tier block — see `docs/block-schema.md` for what that means.*
+
+Before any domain block (AI stack, media, home automation) can be built, one foundational decision has to be made: what runs on the bare metal. This block turns discovery's output — desired workloads, the hardware envelope, comfort level — into that decision. It does not install anything by itself; it's the decision layer that domain blocks then build on.
+
+## What this block produces
+
+This isn't a single fork (hypervisor vs. not) — real homelab setups commonly optimize for one of several different priorities first, and the platform choice follows from that. Illustrative examples only, not a ranked list — check each project's own current docs before deciding, since specifics age faster than the criteria do:
+
+- **Isolation-first** — multiple workloads that shouldn't share a kernel, or GPU passthrough dedicated to one VM. → Proxmox VE (this repo's flagship, most common in this space) or another Type-1 hypervisor.
+- **Storage-first** — the priority is reliable, redundant storage (ZFS) with everything else built around it. → TrueNAS SCALE, or OpenMediaVault on lower-spec hardware. Note these aren't storage-only: both can also run containers and, to varying degrees, VMs — so this axis can overlap with isolation-first rather than exclude it.
+- **Simplicity-first** — a single low-overhead machine running a handful of Docker apps behind a simple dashboard, minimal ops. → CasaOS or a similarly lightweight app-dashboard layer.
+- **Raw-control-first** — comfortable scripting, wants nothing between them and the OS. → bare Debian/Ubuntu running Docker directly, no platform layer at all.
+
+These axes aren't mutually exclusive silos — someone wanting both reliable storage and workload isolation needs a platform (or combination) that covers both, the same way `.homelab-state.yml`'s `wants` list already has to compose across domain blocks.
+
+The decision, and why it was made, gets written to `.homelab-state.yml` / `HOMELAB.md` per `docs/manifest-schema.md` before any domain block starts.
+
+## When to use this
+
+Right after discovery, before touching any domain block. Every domain block in this repo declares `requires: [foundation/host-platform, foundation/network]` — this, alongside `blocks/foundation/network/`, is what they all build on.
+
+## Validation
+
+**Unverified.** This block hasn't been walked end-to-end with a real person on real hardware yet, and its `AGENTS.md.example` carries `last-verified: unverified` to say so. Because it's a decision layer rather than an execution one, the risk is lower than in a domain block — but the honest status is the same.

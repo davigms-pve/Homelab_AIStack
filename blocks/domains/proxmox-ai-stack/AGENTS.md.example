@@ -5,7 +5,7 @@ verified-against: n/a
 
 # Proxmox + AI stack — filled example
 
-**Status: unverified.** This has not yet been dogfooded against real Proxmox hardware — see the gap list in [`../../docs/roadmap.md`](../../docs/roadmap.md). Treat the shape and cadence as reliable; treat exact commands as a starting point to check against current official docs, not as tested fact.
+**Status: unverified.** This has not yet been dogfooded against real Proxmox hardware — see the gap list in [`../../../docs/roadmap.md`](../../../docs/roadmap.md). Treat the shape and cadence as reliable; treat exact commands as a starting point to check against current official docs, not as tested fact.
 
 **Every value below is fake but realistic.** This file is a worked example, not a form — it reads as a finished `AGENTS.md` so you can see the shape you're aiming at. To adapt it, find-and-replace the fake values with your own using the table in [`PLACEHOLDERS.md`](PLACEHOLDERS.md).
 
@@ -14,19 +14,19 @@ verified-against: n/a
 - **Host platform:** Proxmox VE 8.2, single node `pve1`, reachable at `pve1.lan`.
 - **How I reach it:** SSH as `root@pve1.lan` using key auth; `pvesh` runs locally on the node. No API token is in use — if one is created later it lives in the operator's password manager, never in this file.
 - **GPU:** one discrete card at PCI address `01:00.0` (found with `lspci -nn | grep -i vga`), 12GB VRAM. It is **not** the host's console GPU — `pve1` has onboard graphics at `00:02.0` driving the console, so `01:00.0` can be bound to `vfio-pci` safely.
-- **AI VM:** ID `105`, 8 vCPUs, 32GB RAM, disk on storage pool `local-zfs`, NIC on bridge `vmbr0`, static IP `192.0.2.105` (documentation range — substitute your own).
+- **AI VM:** ID `105`, 8 vCPUs, 32GB RAM, disk on storage pool `local-zfs`, NIC on bridge `vmbr0.10` (the `servers` segment `blocks/foundation/network/` already decided on, not a choice made here), static IP `192.0.2.105` via router DHCP reservation (documentation range — substitute your own).
 - **VM machine config:** `q35` machine type with `OVMF (UEFI)` firmware. Both are required for clean PCIe passthrough; SeaBIOS + i440fx will not work here.
 
 ## What must never be touched
 
 - Any VM or LXC ID other than `105`. Node `pve1` already runs `100` (router) and `101` (NAS) — both are load-bearing and out of scope for this block.
 - Any storage pool other than `local-zfs`. In particular, `tank` backs VM `101`'s data.
-- The host's network bridge config, beyond attaching VM `105` to the existing `vmbr0`.
+- The host's network bridge config, beyond attaching VM `105` to the existing `vmbr0.10`. Segmentation itself (which VLANs exist, what's isolated from what) is `network/`'s decision, not this block's to change.
 - The host's console GPU at `00:02.0`. Never blacklist a driver for it — that leaves `pve1` headless with no local recovery path.
 
 ## Cadence
 
-Everything below follows the **Agent Operating Cadence** in [`../../docs/methodology.md`](../../docs/methodology.md): read real state before proposing, summarize what was found, propose exact commands, stop for confirmation before anything state-changing, execute one step at a time, verify, report. Follow those steps; don't restate them here.
+Everything below follows the **Agent Operating Cadence** in [`../../../docs/methodology.md`](../../../docs/methodology.md): read real state before proposing, summarize what was found, propose exact commands, stop for confirmation before anything state-changing, execute one step at a time, verify, report. Follow those steps; don't restate them here.
 
 ## Worked interaction
 
@@ -43,7 +43,7 @@ Everything below follows the **Agent Operating Cadence** in [`../../docs/methodo
 
 > **Agent:** Host is back up. Verified: `dmesg | grep -e DMAR -e IOMMU` shows IOMMU enabled, and `lspci -nnk -s 01:00.0` now reports `Kernel driver in use: vfio-pci`. VMs `100` and `101` came back healthy. The console on `00:02.0` still works — I did not touch it.
 >
-> Proposing next: create VM `105` — 8 vCPUs (`host` CPU type), 32GB RAM, 100GB disk on `local-zfs`, machine type `q35`, firmware `OVMF (UEFI)` with an EFI disk on `local-zfs`, NIC on `vmbr0`, Debian 12 ISO attached. Then add PCI device `01:00.0` with **All Functions** and **PCI-Express** checked. Confirm?
+> Proposing next: create VM `105` — 8 vCPUs (`host` CPU type), 32GB RAM, 100GB disk on `local-zfs`, machine type `q35`, firmware `OVMF (UEFI)` with an EFI disk on `local-zfs`, NIC on `vmbr0.10` (the `servers` segment from `network/`'s decision), Debian 12 ISO attached. Then add PCI device `01:00.0` with **All Functions** and **PCI-Express** checked. Confirm?
 
 *(human confirms)*
 
@@ -74,7 +74,7 @@ Neither is a fixed requirement. Any officially-sourced pair that fits the hardwa
 
 ## Recording progress
 
-Written together, at each confirmation — never batched. See [`../../docs/manifest-schema.md`](../../docs/manifest-schema.md).
+Written together, at each confirmation — never batched. See [`../../../docs/manifest-schema.md`](../../../docs/manifest-schema.md).
 
 ```yaml
 # .homelab-state.yml

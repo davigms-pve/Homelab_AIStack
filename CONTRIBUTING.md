@@ -22,7 +22,7 @@ Any link to a runnable stack, tool, or piece of software must point at its offic
 
 ## Adding a new block
 
-New categories (media, home automation, personal cloud/backup, etc.) are welcome — see the roadmap in the root `README.md` for what's already planned. Follow the existing blocks (`blocks/host-platform/`, `blocks/proxmox-ai-stack/`) as the reference shape rather than inventing a new structure.
+New categories are welcome — see `docs/roadmap.md` for what's already planned. Figure out which tier it belongs in first (`docs/block-schema.md`): `blocks/foundation/` for decisions nearly everything depends on, `blocks/core-services/` for shared services like a reverse proxy or DNS, `blocks/domains/` for end-user-facing workloads like media or home automation. Follow the existing blocks (`blocks/foundation/host-platform/`, `blocks/foundation/network/`, `blocks/domains/proxmox-ai-stack/`) as the reference shape rather than inventing a new structure.
 
 ## Pull requests
 

@@ -1,11 +1,21 @@
 # Block schema
 
-A "block" is this repo's unit of content — a discovery topic, a foundation decision, or a domain (like an AI stack). Every block, present or future, follows this exact shape.
+A "block" is this repo's unit of content. Every block, present or future, follows this exact shape — what varies is which **tier** it belongs to.
+
+## The three tiers
+
+Blocks are organized under `blocks/` by what kind of thing they decide or build, not dumped in flat. This exists because the flat structure hid a real bug: `blocks/domains/proxmox-ai-stack/CHECKLIST.md` used to ask "which VLAN?" as if it were that block's own question, when it's a decision nothing owned. Tiering makes each block's place in the dependency order visible instead of implicit.
+
+- **`blocks/foundation/`** — decisions nearly every domain block depends on: `host-platform` (OS/hypervisor), `network` (topology, addressing). Mostly decision-layer (Discovery & Advisory Cadence), with a thin layer of real execution once a choice is made (installing the OS, creating a bridge).
+- **`blocks/core-services/`** *(named here, not yet built — see below)* — shared services domain blocks depend on but don't want to reimplement each time: a reverse proxy, internal DNS, SSO/auth. Sometimes called "platform services" in enterprise/platform-engineering vocabulary; this repo uses "core services," the term more common in homelab content, for the same thing. **No blocks exist here yet, and the directory isn't created until one does** — an empty tier folder is the stub-farm mistake this repo already avoids elsewhere. Candidates, tracked in `docs/roadmap.md`: `reverse-proxy`, `dns`, `auth-sso`.
+- **`blocks/domains/`** — the end-user-facing workloads: `proxmox-ai-stack` today, media/home-automation/personal-cloud later. These are what someone actually came here to build; foundation and core-services exist to support them.
+
+`discovery/` sits outside all three tiers — it's not a block in this sense, it's what happens before any tier is entered.
 
 ## Files
 
 ```
-blocks/<block-name>/
+blocks/<tier>/<block-name>/
 ├── README.md          — human entry point: what this block covers, when to use it, what it produces
 ├── CHECKLIST.md        — the questions an agent needs answered before it can act in this domain
 ├── AGENTS.md.example   — a fully filled-in reference instruction file, fake-but-realistic values
@@ -18,13 +28,17 @@ Two of the three discovery topics legitimately have nothing to swap, and say so 
 
 ## `requires:`
 
-Every block's `README.md` states its prerequisites in a `requires:` line near the top, e.g.:
+Every block's `README.md` states its prerequisites in a `requires:` line near the top, using the tiered path:
 
 ```
-requires: [discovery, host-platform]
+requires: [foundation/host-platform, foundation/network]
 ```
 
-This exists because blocks compose: choosing media and an AI stack together changes what the hardware envelope needs to account for (storage *and* VRAM), and a domain block like the AI stack can't be reasoned about before the host platform is decided. An agent — or a contributor — should be able to read `requires:` and know what has to be resolved first. A block with an unstated dependency is a bug.
+`discovery` (no tier prefix, since it sits outside the tier system) is the one exception: `requires: [discovery]`.
+
+This exists because blocks compose: choosing media and an AI stack together changes what the hardware envelope needs to account for (storage *and* VRAM), and a domain block like the AI stack can't be reasoned about before the host platform and network are both decided. An agent — or a contributor — should be able to read `requires:` and know what has to be resolved first, and where to find it. A block with an unstated dependency is a bug — which is exactly what motivated splitting `network` out as its own foundation block in the first place.
+
+Note: `requires:` paths and the `blocks:` keys in `.homelab-state.yml` are deliberately different shapes. `requires:` is for navigating this repo, so it uses full tiered paths. `.homelab-state.yml`'s `blocks:` map just needs unique status keys, so it stays flat (`host-platform`, `network`, `proxmox-ai-stack`) — see `docs/manifest-schema.md`.
 
 ## Filled example, not blank template
 
