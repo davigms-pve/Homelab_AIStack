@@ -8,7 +8,7 @@ The decision every domain block was quietly assuming someone else had already ma
 
 - **Segmented or flat.** Whether the network splits into isolated VLANs (common once home automation or IoT devices are in the picture — they're a frequent source of "call home" traffic nobody wants reaching the rest of the LAN) or stays one flat network (fine for a single trusted workload with no untrusted devices).
 - **Subnet ranges per segment**, if segmented.
-- **Bridge-to-VLAN mapping on the host platform** — which Proxmox bridge (or VLAN-tagged sub-interface) domain blocks attach to for which segment. This is the field `blocks/foundation/host-platform/` and domain blocks both read.
+- **Bridge-to-VLAN mapping on the host platform** — which Proxmox bridge (or VLAN-tagged sub-interface) domain blocks attach to for which segment. This is the field domain blocks read instead of asking their own networking questions.
 - **Addressing approach** — static reservations vs. DHCP with reservations, and where those reservations are tracked.
 - **Whether internal DNS resolution exists yet** — a decision flag only. *Running* a self-hosted DNS/adblock service is a **core services** concern (see `docs/block-schema.md`) and isn't built by this block; this block just records whether one's planned, so domain blocks know whether to expect hostname resolution or use raw IPs for now.
 

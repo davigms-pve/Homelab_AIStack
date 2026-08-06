@@ -80,6 +80,8 @@ The running list. Items get struck through and dated when closed, not deleted.
 **Closed:**
 
 - ~~No version tags in git — the build cadence said each phase closes with a tag, but the phase table was the only record, making it a claim rather than evidence.~~ Fixed 2026-08-06 — `v0.3.0` tagged at the first merge to `main`, closing phases 0–3, 5, and 7 together for the reason given under the phase table.
+- ~~`blocks/foundation/network/README.md` said its bridge mapping was read by `blocks/foundation/host-platform/` too, implying a dependency host-platform never declares and its checklist never uses.~~ Fixed 2026-08-06 — the sentence was wrong, not the dependency graph; only domain blocks read that field.
+- ~~`docs/index.md` claimed named products were "isolated in one small file"; they appear in five.~~ Fixed 2026-08-06 — claim reworded to what's true (illustrations in decision-layer text only, never in executed instructions) rather than building a file to make the old sentence true.
 - ~~Root `README.md` and `CHANGELOG.md` still said "both blocks" and "neither" after `blocks/foundation/network/` was added, undercounting the blocks that ship unverified.~~ Fixed 2026-08-06 — all three now counted.
 - ~~Flagship `README.md` claimed it had been dogfooded against real hardware, contradicting its own `unverified` frontmatter.~~ Fixed 2026-08-06.
 - ~~`blocks/host-platform/` carried no validation status at all.~~ Fixed 2026-08-06 — now marked unverified in both its README and its example's frontmatter.
