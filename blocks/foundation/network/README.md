@@ -18,7 +18,7 @@ Physical switch/router-side VLAN tagging is vendor-specific (UniFi, pfSense, a g
 
 ## When to use this
 
-Right after `discovery/`, alongside or right before `blocks/foundation/host-platform/` — the two foundation blocks don't have a strict order relative to each other, but both must be resolved before any domain block starts, since domain blocks declare `requires: [foundation/host-platform, foundation/network]`.
+**Last of the three foundation blocks**, after `blocks/foundation/host-platform/` has chosen a platform and `blocks/foundation/hardware-bringup/` has produced a machine that answers. The order isn't arbitrary: the checklist below asks which physical NICs the host has and which one carries the VLAN trunk, and nobody can answer that about a machine that doesn't exist yet. All three must be resolved before any domain block starts, since domain blocks declare `requires: [foundation/host-platform, foundation/hardware-bringup, foundation/network]`.
 
 ## Validation
 

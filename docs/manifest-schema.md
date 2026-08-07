@@ -14,10 +14,11 @@ Current snapshot only, overwritten as state changes:
 blocks:
   discovery: done
   host-platform: done
+  hardware-bringup: done
   network: done
   proxmox-ai-stack: in-progress
-  media: excluded
-  home-automation: planned
+  media: planned
+  home-automation: excluded
 
 decisions:
   # recorded once, by Agent Operating Cadence step 0 — never re-asked once true
@@ -26,7 +27,7 @@ decisions:
   # from discovery/needs.md
   wants: [ai-stack, media]
   priority: ai-stack
-  comfort_level: beginner-docker
+  comfort_level: beginner
   budget_band: under-1000
   constraints: [quiet, small-space]
 
@@ -63,7 +64,54 @@ decisions:
   ai_vm_id: 105
 ```
 
-Status values: `excluded`, `planned`, `in-progress`, `done`. The `blocks:` map uses short, flat, unique names — not the tiered folder paths (`blocks/foundation/host-platform/` etc.) that `requires:` uses elsewhere. It only needs to track status, and every block name is already unique across tiers, so there's nothing to gain from making it mirror the directory structure. See `docs/block-schema.md` for why `requires:` and `blocks:` are deliberately different shapes.
+### Status values
+
+`excluded`, `planned`, `in-progress`, `awaiting-human`, `done`.
+
+**`awaiting-human` is the one that isn't obvious, and it exists because `in-progress` lies.** Some work can only be done by the person — buying parts, assembling a machine, installing an OS before anything is reachable over the network. During that stretch the agent isn't working; it's blocked, possibly for weeks. A block sitting at `in-progress` for a month tells the next session that work is underway, which is the opposite of true, and invites it to "pick up where things left off" when the honest answer is *it's your turn, not mine*.
+
+When a block is `awaiting-human`, record what's being waited on:
+
+```yaml
+blocks:
+  hardware-bringup: awaiting-human
+
+awaiting:
+  block: hardware-bringup
+  checkpoint: parts-ordered
+  since: 2026-08-06
+  human-todo: see "Open work order" in HOMELAB.md
+  agent-resumes-by: verifying delivered parts against decisions.hardware_envelope
+```
+
+`agent-resumes-by` is the field that earns its keep: it's what a fresh session reads to know its first action, without re-deriving anything or re-interviewing the person. Delete the `awaiting:` block when the status moves off `awaiting-human` — it describes a current wait, not history. The history belongs in `HOMELAB.md`.
+
+### `wants` and `blocks:` describe the same intent, and must agree
+
+`wants` is a **live** list, not a record of what was said once. If someone drops a category, it comes out of `wants` *and* its block goes to `excluded`, in the same write. If they add one, both move together.
+
+This matters because blocks read it: `discovery/hardware-envelope.md` pulls "straight from the `wants` list" to size hardware. A stale `wants` sizes a machine for workloads nobody wants any more, and an over-eager `excluded` hides one they do. Concretely: **a block marked `excluded` must not appear in `wants`, and anything in `wants` must not be `excluded`.** Every other status is fair game — `planned` is exactly what a wanted-but-not-started block looks like.
+
+The `blocks:` map uses short, flat, unique names — not the tiered folder paths (`blocks/foundation/host-platform/` etc.) that `requires:` uses elsewhere. It only needs to track status, and every block name is already unique across tiers, so there's nothing to gain from making it mirror the directory structure. See `docs/block-schema.md` for why `requires:` and `blocks:` are deliberately different shapes.
+
+### Closed vocabularies
+
+Most `decisions:` values are free-form — a subnet is a subnet. Three are **closed sets**, because blocks branch on them, and free text turns a branch into a coin flip. Two agents writing `beginner-docker` and `novice` for the same person produce different downstream advice from the same facts.
+
+**`comfort_level`** — exactly one of:
+
+| Value | Means |
+|---|---|
+| `non-technical` | Hasn't used a terminal. Every step gets performed for them or explained in full. |
+| `beginner` | Has followed guides, maybe run a container. Can type a given command; can't compose one. |
+| `intermediate` | Comfortable in a terminal, runs containers routinely, can debug a simple failure. |
+| `advanced` | Already operates servers. Comfortable with hypervisors, networking, and recovery. |
+
+**`wants`** — any of `ai-stack`, `media`, `home-automation`, `personal-cloud`. These are the categories `discovery/needs.md` offers, and they match block names so `wants` and `blocks:` can be compared directly.
+
+**`priority`** — exactly one value, which **must** also appear in `wants`.
+
+Two things deliberately left open: `budget_band` is free-form because currency, region, and phrasing all vary (`under-1000`, `2000-3000`, `whatever-it-takes`) — nothing branches on it, it's read by a human or reasoned about in context. `constraints` is an open tag list for the same reason. If something later needs to branch on either, close it then and update this table — don't pre-emptively invent values nobody reads.
 
 **Field names are set by the block that produces them,** and every block states which keys it writes. The list above is the union of what the blocks in this repo currently produce — a new block adds its own keys under `decisions:` and documents them in its own `CHECKLIST.md`. Nothing here is required to exist before the block that produces it has run; a mid-discovery state file is legitimately partial.
 

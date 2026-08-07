@@ -26,7 +26,7 @@ An envelope can be individually reasonable on every line and still describe a ma
 - **A low idle-power target alongside a discrete GPU.** A discrete card idles well above a NUC-class machine — a sub-15W idle target and an inference GPU describe two different computers.
 - **A VRAM target the budget band can't reach.** Check the two against each other explicitly. If they don't meet, the resolution is either a wider band, a smaller model-size expectation, or accepting prior-generation/used hardware — all three are legitimate, and it's the person's call which.
 - **Media in `wants` with fixed, non-expandable storage.** Media libraries grow; a fixed bay count is a decision to re-buy later.
-- **A beginner `comfort_level` alongside an envelope that requires GPU passthrough.** Not a contradiction — passthrough is learnable — but it's a real learning curve that should be named out loud rather than discovered halfway through the flagship block.
+- **`comfort_level: non-technical` or `beginner` alongside an envelope that requires GPU passthrough.** Not a contradiction — passthrough is learnable — but it's a real learning curve that should be named out loud rather than discovered halfway through the flagship block.
 
 **Never resolve one of these silently.** Per the Discovery & Advisory Cadence, surface the conflict, explain the tradeoff in one or two sentences, and let the person choose. An envelope that quietly dropped somebody's stated noise constraint is worse than one that asked.
 

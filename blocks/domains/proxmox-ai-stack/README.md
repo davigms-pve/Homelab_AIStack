@@ -1,6 +1,6 @@
 # Proxmox + AI stack
 
-requires: [foundation/host-platform, foundation/network]
+requires: [foundation/host-platform, foundation/hardware-bringup, foundation/network]
 
 *Domain-tier block — see `docs/block-schema.md` for what that means.*
 

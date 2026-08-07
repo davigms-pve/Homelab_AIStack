@@ -1,0 +1,107 @@
+---
+last-verified: unverified
+verified-against: n/a
+---
+
+# Hardware bring-up — filled example
+
+**Status: unverified.** The protocol here was designed from a cold walkthrough that exposed this gap, not from a completed build — see [`../../../docs/roadmap.md`](../../../docs/roadmap.md). Treat the checkpoints as sound and the specific questions as a first draft.
+
+**Every value below is fake but realistic**, continuing the same fictional homelab as the other blocks. To adapt it, find-and-replace using [`PLACEHOLDERS.md`](PLACEHOLDERS.md).
+
+## Context
+
+From `.homelab-state.yml`, already decided before this block started:
+
+- `wants: [ai-stack, media]`, `priority: ai-stack`, `comfort_level: beginner`
+- `hardware_envelope:` 6–8 cores, 32GB RAM, discrete GPU required at ~12GB VRAM, 2 drive bays, ~35W idle, quiet under load
+- `host_platform: proxmox`, `gpu_passthrough: true`
+
+They're building it themselves. I raised `assumes: [physical-assembly, os-install, bios-firmware]` against their `beginner` comfort level before starting, and said plainly that handing the envelope to a shop was a fully supported alternative. They'd rather build it — they've done a desktop before. Recorded in `HOMELAB.md` so nobody re-litigates it.
+
+## Checkpoint 1 — the work order
+
+Checked line by line against the envelope. What went into `HOMELAB.md`:
+
+| Item | Why this, specifically |
+|---|---|
+| 8-core desktop CPU with integrated graphics | Envelope says 6–8. Integrated graphics matters independently of the discrete card: it drives the console, so the discrete card can be handed to a VM later without leaving the host headless. |
+| Motherboard, 4 memory slots, 2× M.2 + 4× SATA, one PCIe x16 | 32GB now in 2 slots, so 64GB is a later drop-in rather than a replacement. Storage connectors exceed the 2-bay envelope on purpose — bays are the thing people regret. |
+| 32GB memory, 2 sticks | Envelope figure. Two sticks not four, for the upgrade path above. |
+| 2× NVMe drives, **new** | New is non-negotiable here — these hold the data. Used drives are a false economy on the one component whose failure loses something irreplaceable. |
+| Mid-tower case, full-length GPU clearance | The card isn't being bought yet. The clearance has to exist now or phase three means a new case. |
+| Power supply sized for CPU + a 12GB-class card | Same reasoning. Sizing for today's parts means replacing it later — the single most avoidable rebuild in this plan. |
+| Quiet-rated CPU cooler and case fans | `constraints: [quiet, small-space]`. Closet shelf, apartment. |
+
+Model numbers were researched against current availability at the time of ordering and recorded alongside this table in `HOMELAB.md`. They're not written into this repo on purpose — they'd be wrong within a year, and the *why* column is the part that stays useful when something is out of stock.
+
+State at release:
+
+```yaml
+blocks:
+  hardware-bringup: awaiting-human
+
+awaiting:
+  block: hardware-bringup
+  checkpoint: parts-ordered
+  since: 2026-08-06
+  human-todo: see "Open work order" in HOMELAB.md
+  agent-resumes-by: verifying delivered parts against decisions.hardware_envelope
+```
+
+## Checkpoint 2 — assembled, before the platform
+
+What they reported back, eleven days later:
+
+- Powers on, reaches the firmware screen.
+- Both NVMe drives listed. Counted against the order: 2 of 2.
+- Memory reads 32GB. Correct.
+- USB installer detected.
+
+One thing came up: the front-panel power connector wasn't seating and they were about to force it. Pointed them at the board manual's front-panel diagram rather than guessing at the pinout — it was offset by one pin. Nothing damaged.
+
+`awaiting:` updated to `checkpoint: assembled`.
+
+## Checkpoint 3 — installed and reachable
+
+They installed Proxmox VE 8.2, named the node `pve1`, and enabled SSH. Reported it responding at `192.0.2.50` — a temporary address from their existing router; `blocks/foundation/network/` formalizes addressing later and hasn't run yet.
+
+First connection, and verification against what I was told:
+
+- Platform: Proxmox VE 8.2. Matches.
+- Memory: 32GB seen by the host. Matches.
+- Storage: both NVMe devices present. Matches the order.
+- Integrated graphics driving the console, PCIe x16 slot empty and available. Matches the plan for phase three.
+
+No drift. Recorded:
+
+```yaml
+blocks:
+  host-platform: done
+  hardware-bringup: done
+
+decisions:
+  host_access:
+    method: ssh
+    address: 192.0.2.50
+    user: root
+  machine_as_built:
+    cpu_cores: 8
+    ram_gb: 32
+    drives: 2
+    gpu_slot: free
+```
+
+No credentials, keys, or tokens are written here or anywhere in `.homelab-state.yml` — the file records *how* to reach the host, never *what proves you may*.
+
+`awaiting:` deleted, since nothing is being waited on. `HOMELAB.md` got one line: *built to envelope, no substitutions, GPU slot left free for phase three.*
+
+## What must never be touched
+
+- The person's existing router, DHCP ranges, or anything off this host. `blocks/foundation/network/` owns that and hasn't run.
+- Any other machine on their network. This block concerns one new host and nothing else.
+- Firmware settings beyond what the platform install actually requires — verify defaults rather than changing them speculatively.
+
+## Cadences
+
+Checkpoints 1 and 2 followed the Discovery & Advisory Cadence; from the first connection at checkpoint 3 onward, the Agent Operating Cadence. Both are in [`../../../docs/methodology.md`](../../../docs/methodology.md) and are not restated here.

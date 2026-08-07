@@ -30,7 +30,7 @@ This maps directly into `.homelab-state.yml`:
 decisions:
   wants: [ai-stack, media]
   priority: ai-stack
-  comfort_level: beginner-docker
+  comfort_level: beginner
   budget_band: under-1000
   constraints: [quiet, small-space]
 ```
