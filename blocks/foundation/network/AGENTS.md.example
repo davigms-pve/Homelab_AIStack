@@ -1,0 +1,72 @@
+---
+last-verified: unverified
+verified-against: n/a
+---
+
+# Network — filled example
+
+**Status: unverified.** Not yet walked end-to-end with a real person on real hardware — see the gap list in [`../../../docs/roadmap.md`](../../../docs/roadmap.md). Treat the shape and cadence as reliable; confirm exact steps against your router/switch vendor's current docs.
+
+**Every value below is fake but realistic**, continuing the same fictional homelab as `blocks/foundation/host-platform/` and `blocks/domains/proxmox-ai-stack/`. To adapt it, find-and-replace using [`PLACEHOLDERS.md`](PLACEHOLDERS.md).
+
+## Context
+
+- Discovery output: wants `[ai-stack, media]` now, home automation flagged as a later priority — the presence of home automation on the list, even as "later," is what tips this toward segmentation now rather than retrofitting a VLAN after IoT devices are already on a flat network.
+- Router/switch: VLAN-capable (802.1Q trunking supported) — confirmed before deciding to segment.
+- Host platform: Proxmox, node `pve1`, single physical NIC carrying a VLAN trunk.
+
+## Decision
+
+**Segmented — two VLANs.**
+- VLAN `10`, "servers" — subnet `192.0.2.0/24`. Carries the Proxmox management interface and all domain-block VMs, including the AI stack VM at `192.0.2.105`.
+- VLAN `20`, "iot" — subnet `198.51.100.0/24`. Reserved for the home-automation domain block once it exists; nothing lives here yet. Isolated from `servers` at the router/firewall level — devices on `iot` cannot initiate connections into `servers`.
+
+Chosen over staying flat because home automation is already on the discovery list, even as a later priority — segmenting now avoids retrofitting VLANs after IoT devices are already deployed flat, which is more disruptive than deciding it once up front.
+
+**Bridge mapping on `pve1`:** `vmbr0` is the trunk (attached to the physical NIC carrying tagged traffic), `vmbr0.10` is the VLAN-tagged sub-interface domain blocks attach to for the `servers` segment. `vmbr0.20` exists on the switch/router side for `iot` but has no Proxmox-side interface yet, since nothing uses it.
+
+**Addressing:** static reservations via the router's DHCP reservation table, not static IPs configured inside each VM — keeps addressing changeable from one place. Tracked in `HOMELAB.md`.
+
+**Internal DNS:** not yet — devices on `servers` use the router's default DNS forwarding for now. A self-hosted resolver is a future core-services candidate, not built here.
+
+## Cadence
+
+The topology decision above follows the **Discovery & Advisory Cadence** ([`../../../docs/methodology.md`](../../../docs/methodology.md)). Creating the `vmbr0.10` bridge on `pve1` is real execution against the host, so it follows the **Agent Operating Cadence** instead — including step 0's standing agreement check, since this is the first block in a session that touches real state.
+
+## Worked interaction
+
+> **Agent:** Discovery shows home automation on the list, even as a later priority. Proposing: segment now — VLAN `10` (servers, `192.0.2.0/24`) and VLAN `20` (iot, `198.51.100.0/24`), isolated from each other at the router. Confirm your router/switch supports 802.1Q tagging before I propose the Proxmox side?
+> *(human confirms switch supports VLANs, sets up the trunk port and the two VLANs at the switch/router per its own vendor docs)*
+> **Agent:** Reading current state on `pve1` — `ip link show` shows one bridge, `vmbr0`, no VLAN sub-interfaces yet. Proposing: add a VLAN-aware sub-interface `vmbr0.10` bridged to the `servers` VLAN, so VMs can attach to it directly. This doesn't touch the existing `vmbr0` trunk. Confirm?
+> *(human confirms; agent creates `vmbr0.10`, verifies it's up)*
+> **Agent:** `vmbr0.10` is up. `blocks/foundation/host-platform/` and `blocks/domains/proxmox-ai-stack/` can now attach VMs to it directly instead of asking their own networking questions.
+
+## Recording the decision
+
+```yaml
+# .homelab-state.yml
+blocks:
+  network: done
+decisions:
+  network_scheme: segmented-vlan
+  vlans:
+    - id: 10
+      name: servers
+      subnet: 192.0.2.0/24
+    - id: 20
+      name: iot
+      subnet: 198.51.100.0/24
+  bridge_mapping:
+    vmbr0.10: servers
+```
+
+```markdown
+<!-- HOMELAB.md -->
+### 2026-08-06
+Segmented the network — servers (VLAN 10) and iot (VLAN 20, reserved
+for home automation later), isolated from each other at the router.
+Chose this now because home automation was already on the wishlist;
+retrofitting a VLAN after IoT devices are deployed flat is worse than
+deciding it up front. Addressing via router DHCP reservations, tracked
+here rather than static IPs inside each VM.
+```

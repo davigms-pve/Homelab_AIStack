@@ -1,0 +1,96 @@
+---
+last-verified: unverified
+verified-against: n/a
+---
+
+# Proxmox + AI stack — filled example
+
+**Status: unverified.** This has not yet been dogfooded against real Proxmox hardware — see the gap list in [`../../../docs/roadmap.md`](../../../docs/roadmap.md). Treat the shape and cadence as reliable; treat exact commands as a starting point to check against current official docs, not as tested fact.
+
+**Every value below is fake but realistic.** This file is a worked example, not a form — it reads as a finished `AGENTS.md` so you can see the shape you're aiming at. To adapt it, find-and-replace the fake values with your own using the table in [`PLACEHOLDERS.md`](PLACEHOLDERS.md).
+
+## Environment
+
+- **Host platform:** Proxmox VE 8.2, single node `pve1`, reachable at `pve1.lan`.
+- **How I reach it:** SSH as `root@pve1.lan` using key auth; `pvesh` runs locally on the node. No API token is in use — if one is created later it lives in the operator's password manager, never in this file.
+- **GPU:** one discrete card at PCI address `01:00.0` (found with `lspci -nn | grep -i vga`), 12GB VRAM. It is **not** the host's console GPU — `pve1` has onboard graphics at `00:02.0` driving the console, so `01:00.0` can be bound to `vfio-pci` safely.
+- **AI VM:** ID `105`, 8 vCPUs, 32GB RAM, disk on storage pool `local-zfs`, NIC on bridge `vmbr0.10` (the `servers` segment `blocks/foundation/network/` already decided on, not a choice made here), static IP `192.0.2.105` via router DHCP reservation (documentation range — substitute your own).
+- **VM machine config:** `q35` machine type with `OVMF (UEFI)` firmware. Both are required for clean PCIe passthrough; SeaBIOS + i440fx will not work here.
+
+## What must never be touched
+
+- Any VM or LXC ID other than `105`. Node `pve1` already runs `100` (router) and `101` (NAS) — both are load-bearing and out of scope for this block.
+- Any storage pool other than `local-zfs`. In particular, `tank` backs VM `101`'s data.
+- The host's network bridge config, beyond attaching VM `105` to the existing `vmbr0.10`. Segmentation itself (which VLANs exist, what's isolated from what) is `network/`'s decision, not this block's to change.
+- The host's console GPU at `00:02.0`. Never blacklist a driver for it — that leaves `pve1` headless with no local recovery path.
+
+## Cadence
+
+Everything below follows the **Agent Operating Cadence** in [`../../../docs/methodology.md`](../../../docs/methodology.md): read real state before proposing, summarize what was found, propose exact commands, stop for confirmation before anything state-changing, execute one step at a time, verify, report. Follow those steps; don't restate them here.
+
+## Worked interaction
+
+> **Agent:** Reading current state. `pvesh get /nodes/pve1/qemu` returns VM IDs `100` and `101` in use — `105` is free. `lspci -nn | grep -i vga` shows `01:00.0` plus onboard `00:02.0`. `find /sys/kernel/iommu_groups/ -type l | grep 01:00` shows `01:00.0` and `01:00.1` (its HDMI audio function) alone in IOMMU group 14, so the card is cleanly isolable. `lspci -nnk -s 01:00.0` shows no kernel driver in use — nothing on the host has claimed it.
+>
+> Proposing, in this order:
+> 1. Enable IOMMU on the host: add `intel_iommu=on iommu=pt` to `/etc/kernel/cmdline`, then `proxmox-boot-tool refresh`.
+> 2. Blacklist the host driver for the passthrough card only, and bind `01:00.0`/`01:00.1` to `vfio-pci` by device ID.
+> 3. Reboot `pve1`. This drops the node for roughly two minutes; VMs `100` and `101` go down with it.
+>
+> Step 3 restarts a node running your router. Confirm before I proceed?
+
+*(human confirms; agent executes steps 1–2, stops, human schedules the reboot)*
+
+> **Agent:** Host is back up. Verified: `dmesg | grep -e DMAR -e IOMMU` shows IOMMU enabled, and `lspci -nnk -s 01:00.0` now reports `Kernel driver in use: vfio-pci`. VMs `100` and `101` came back healthy. The console on `00:02.0` still works — I did not touch it.
+>
+> Proposing next: create VM `105` — 8 vCPUs (`host` CPU type), 32GB RAM, 100GB disk on `local-zfs`, machine type `q35`, firmware `OVMF (UEFI)` with an EFI disk on `local-zfs`, NIC on `vmbr0.10` (the `servers` segment from `network/`'s decision), Debian 12 ISO attached. Then add PCI device `01:00.0` with **All Functions** and **PCI-Express** checked. Confirm?
+
+*(human confirms)*
+
+> **Agent:** VM `105` created, Debian 12 installed. Verifying passthrough from inside the VM before going further: `lspci | grep -i nvidia` shows the card present. Installed the vendor GPU driver per the vendor's own current documentation; `nvidia-smi` now reports the card and 12GB VRAM. Passthrough is confirmed working end to end.
+>
+> Next: install Docker, then the NVIDIA Container Toolkit — without the toolkit, containers cannot see the GPU even though the VM can. Confirm?
+
+*(human confirms)*
+
+> **Agent:** Docker installed. Container Toolkit installed, and `docker run --rm --gpus all <vendor cuda image> nvidia-smi` printed the card from inside a container — GPU access works at the container layer, not just the VM layer.
+>
+> Proposing the AI stack: an LLM runtime with `--gpus all`, then a chat interface pointed at it, both bound to `192.0.2.105` on the LAN only, not exposed to the internet. With 12GB VRAM, a 7B–13B class model at 4-bit quantization fits comfortably; a 70B model will not, and will silently fall back to CPU and crawl. Confirm the model size before I pull anything?
+
+*(human confirms)*
+
+> **Agent:** Deployed one container at a time. The LLM runtime is up and answered a test prompt in 1.4s with the GPU at 41% utilization — confirming it is actually using the card, not the CPU. The chat interface is up on port 3000, reachable at `http://192.0.2.105:3000` from the LAN only.
+>
+> Final state: VM `105` on `pve1`, GPU `01:00.0` passed through, two containers running, nothing else on the node modified. VMs `100` and `101` untouched and healthy.
+
+## AI stack software
+
+This example uses two commonly-paired official projects. Check their own current docs before running anything — install steps change faster than this file does, and per the repo's link-vetting rule these point at official sources only:
+
+- **LLM runtime:** Ollama — `ollama.com`, source at `github.com/ollama/ollama`.
+- **Chat interface:** Open WebUI — `github.com/open-webui/open-webui`.
+
+Neither is a fixed requirement. Any officially-sourced pair that fits the hardware envelope works; these are the worked illustration, not a recommendation to prefer them over alternatives.
+
+## Recording progress
+
+Written together, at each confirmation — never batched. See [`../../../docs/manifest-schema.md`](../../../docs/manifest-schema.md).
+
+```yaml
+# .homelab-state.yml
+blocks:
+  proxmox-ai-stack: in-progress   # -> done once verified end-to-end
+decisions:
+  gpu_passthrough: true
+  ai_vm_id: 105
+```
+
+```markdown
+<!-- HOMELAB.md -->
+### 2026-08-06
+Created VM 105 on pve1 with GPU 01:00.0 passed through. Used q35 + OVMF
+because SeaBIOS won't do clean PCIe passthrough. Blacklisted the driver
+for the discrete card only — the onboard GPU at 00:02.0 still drives the
+host console, so there's a local recovery path if the network config
+ever breaks. Next: deploy the AI stack layer.
+```
