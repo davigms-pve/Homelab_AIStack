@@ -20,6 +20,14 @@ This is the one discovery topic that's a little different: the person needs *an 
 - **IDE-integrated agents:** tools like Cursor or Windsurf that combine an editor with an agent that can run commands within a project.
 - **Chat-only assistants:** a general-purpose chat interface with no execution ability — fine for discovery, not sufficient once a block moves into the Agent Operating Cadence.
 
+## Output
+
+One key: `decisions.agent_capability`, set to `shell-capable` or `advisory-only`.
+
+This is the one field in discovery that describes the *operator* rather than the homelab, and it earns its place for two reasons. It's what `start-here/TRAVERSAL.md` reads to decide whether the person can proceed past discovery at all — an `advisory-only` setup can finish every discovery topic and then cannot execute a foundation or domain block. And recording it means a later session knows why things stopped, instead of re-deriving it or, worse, an execution-capable agent assuming the previous stall was a decision.
+
+Don't infer this silently from your own capabilities and move on. An agent knows its own class, so the capability half is free — but *where it runs* and *cost model* above are still the person's answers, and the class only becomes a recorded decision once they've confirmed it.
+
 ## Placeholders
 
-None — this file's job is to help someone land on a capability class, not fill in a template. The chosen tooling class doesn't need to be written into `.homelab-state.yml`; it's a means to using the rest of the repo, not a fact about the homelab itself.
+None to swap — this file is a conversation, not a template. Its single output key is described above.

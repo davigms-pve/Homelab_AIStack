@@ -53,6 +53,8 @@ Only three, tracked deliberately. Stars and forks are excluded — they measure 
 
 **6 / 6 structurally complete.** Note what this metric does and doesn't say: it counts whether the three parts exist and are genuinely filled, not whether their contents are correct. Metric 3 is what tests correctness.
 
+`start-here/` is deliberately not a row and never will be. It isn't a block — there's nothing in it to adapt, so a CEP triple would be three empty ceremonies. Same reason `discovery/README.md` isn't a row while the three discovery topics are. The denominator counts blocks and discovery topics; adding non-block folders to it would inflate the number without measuring anything.
+
 **2. Oldest `last-verified` date** — the staleness signal across all blocks.
 
 Currently **n/a — no block has ever been verified.** All three blocks carry `last-verified: unverified`. This metric only starts producing a number after Phase 4, and that's precisely why it's worth tracking: an empty value here is a louder signal than an old date would be.

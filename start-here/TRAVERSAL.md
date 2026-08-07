@@ -34,9 +34,13 @@ The tiered-path and flat-key forms are deliberately different shapes — `requir
 |---|---|
 | `needs` | `wants`, `priority`, `comfort_level`, `budget_band`, `constraints` |
 | `hardware-envelope` | `hardware_envelope` |
-| `ai-tooling` | **nothing — it writes no state.** It's satisfied by observation: if you can execute commands and reach hosts, the shell/host-capable class is met. If you can only advise, say so plainly now, because everything past discovery needs execution. |
+| `ai-tooling` | `agent_capability` (`shell-capable` or `advisory-only`) |
 
 `blocks: discovery` flips to `done` only when all three topics are satisfied.
+
+**Don't self-certify `agent_capability` and move on.** You know your own capability class, so that half is free — but `discovery/ai-tooling.md` also asks where the tool runs and what it costs, and those are the person's answers. Confirm the class with them, then record it.
+
+**If `agent_capability` is `advisory-only`, stop at the end of discovery.** Every discovery topic can be completed by an advisory-only assistant; nothing past it can. Say so plainly rather than starting a foundation block you can't finish — and because the value is recorded, a later session with an execution-capable agent knows exactly why things stopped instead of re-deriving it.
 
 ## Step 3 — pick the next block
 

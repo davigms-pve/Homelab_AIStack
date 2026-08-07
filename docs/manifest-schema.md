@@ -30,6 +30,9 @@ decisions:
   budget_band: under-1000
   constraints: [quiet, small-space]
 
+  # from discovery/ai-tooling.md — shell-capable or advisory-only
+  agent_capability: shell-capable
+
   # from discovery/hardware-envelope.md
   hardware_envelope:
     cpu_cores: 6-8
