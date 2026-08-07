@@ -20,7 +20,7 @@ We call this the CEP method (Checklist / Example / Placeholders). See `block-sch
 
 ## Why the journey starts at discovery, not at a technical block
 
-Most homelab guides assume you already know you want Proxmox, or Docker, or a particular stack. This repo assumes you might have nothing yet — not even the AI tool to guide you. So it starts at `discovery/`: what do you actually want to run, what hardware class do you need, what kind of AI tool fits the job. Everything downstream — host platform and network, then domain blocks like the AI stack — builds on that, declared explicitly through each block's `requires:` field so choices compose instead of contradicting each other.
+Most homelab guides assume you already know you want Proxmox, or Docker, or a particular stack. This repo assumes you might have nothing yet — not even the AI tool to guide you. So it starts at `discovery/`: what do you actually want to run, what hardware class do you need, what kind of AI tool fits the job. Everything downstream — host platform, then getting a real machine built and reachable, then network, then domain blocks like the AI stack — builds on that, declared explicitly through each block's `requires:` field so choices compose instead of contradicting each other.
 
 Declaring a dependency isn't the same as being able to act on one, though, which is why `start-here/TRAVERSAL.md` exists: it's the file an agent is handed first, and it specifies how to resolve those `requires:` declarations against the user's recorded state and pick the next block. Without it, the ordering is something an agent has to infer — and inference works right up until it doesn't.
 

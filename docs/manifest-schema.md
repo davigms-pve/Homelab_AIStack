@@ -48,6 +48,17 @@ decisions:
   gpu_passthrough: true
   storage_layout: zfs-mirror
 
+  # from blocks/foundation/hardware-bringup/
+  host_access:
+    method: ssh
+    address: 192.0.2.50
+    user: root
+  machine_as_built:
+    cpu_cores: 8
+    ram_gb: 32
+    drives: 2
+    gpu_slot: free
+
   # from blocks/foundation/network/
   network_scheme: segmented-vlan
   vlans:
@@ -93,6 +104,16 @@ awaiting:
 This matters because blocks read it: `discovery/hardware-envelope.md` pulls "straight from the `wants` list" to size hardware. A stale `wants` sizes a machine for workloads nobody wants any more, and an over-eager `excluded` hides one they do. Concretely: **a block marked `excluded` must not appear in `wants`, and anything in `wants` must not be `excluded`.** Every other status is fair game — `planned` is exactly what a wanted-but-not-started block looks like.
 
 The `blocks:` map uses short, flat, unique names — not the tiered folder paths (`blocks/foundation/host-platform/` etc.) that `requires:` uses elsewhere. It only needs to track status, and every block name is already unique across tiers, so there's nothing to gain from making it mirror the directory structure. See `docs/block-schema.md` for why `requires:` and `blocks:` are deliberately different shapes.
+
+### Never record credentials
+
+`host_access` says **how** to reach a host and as whom. It must never carry **what proves you may** — no passwords, SSH private keys, API tokens, or recovery codes, and no paths that amount to the same thing. This file gets committed, shared with agents, pasted into chats, and read by future sessions; a credential in it is a credential everywhere.
+
+The same rule covers `HOMELAB.md`. Secrets live wherever the person already keeps secrets — an agent's job is to reference them, never to transcribe them.
+
+### `machine_as_built` is not `hardware_envelope`
+
+`hardware_envelope` is what was aimed at, written during discovery. `machine_as_built` is what actually exists, written at `hardware-bringup` checkpoint 3 after a real connection confirmed it. Keep both: the gap between them is the useful part. A machine that came back with one drive fewer than planned is exactly the sort of thing later blocks need to notice rather than assume away.
 
 ### Closed vocabularies
 

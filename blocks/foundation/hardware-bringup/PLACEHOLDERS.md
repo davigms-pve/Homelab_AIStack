@@ -9,7 +9,7 @@
 | `ssh` / `root` | How the agent reaches the host, and as whom | Set during the platform install. **Never record the password or key alongside it** — `.homelab-state.yml` records how to reach the host, never what proves you may. |
 | `Proxmox VE 8.2` | The platform and version actually installed | Your `decisions.host_platform` choice, at whatever version was current when you installed it. Record the real one — "whatever was current" ages badly. |
 | 8 cores / 32GB / 2 drives / 12GB VRAM | The as-built machine | Your own `decisions.hardware_envelope`, then what you actually bought. Record both: the envelope is what you aimed at, `machine_as_built` is what exists. |
-| `2026-08-06`, "eleven days later" | Dates and elapsed time in the `awaiting:` record | Real dates as you go. The elapsed gap is the point of the record — it's what makes a four-week wait resumable. |
+| `2026-08-06`, `2026-08-17`, `2026-08-19` | The `since:` date and the dates each checkpoint cleared | Real dates as you go. The gap between them is the point of the record — it's what makes a multi-week wait resumable instead of a re-interview. |
 | The parts table's left column | Item descriptions | Researched against your envelope at the time you order. |
 
 ## What deliberately has no placeholder

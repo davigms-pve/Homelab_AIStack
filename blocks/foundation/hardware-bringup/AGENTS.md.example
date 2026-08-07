@@ -49,29 +49,31 @@ awaiting:
   agent-resumes-by: verifying delivered parts against decisions.hardware_envelope
 ```
 
-## Checkpoint 2 — assembled, before the platform
+## Checkpoint 2 — assembled, cleared 2026-08-17
 
-What they reported back, eleven days later:
+| Check | Result |
+|---|---|
+| Powers on, reaches firmware screen | pass |
+| Drives listed in firmware | 2 of 2, matches order |
+| Memory recognized | 32GB, matches order |
+| Boot media detected | pass |
 
-- Powers on, reaches the firmware screen.
-- Both NVMe drives listed. Counted against the order: 2 of 2.
-- Memory reads 32GB. Correct.
-- USB installer detected.
-
-One thing came up: the front-panel power connector wasn't seating and they were about to force it. Pointed them at the board manual's front-panel diagram rather than guessing at the pinout — it was offset by one pin. Nothing damaged.
+Noted during assembly: the front-panel power connector was offset by one pin. Resolved against the board manual's front-panel diagram rather than by guessing at the pinout. No damage, no parts replaced.
 
 `awaiting:` updated to `checkpoint: assembled`.
 
-## Checkpoint 3 — installed and reachable
+## Checkpoint 3 — installed and reachable, cleared 2026-08-19
 
-They installed Proxmox VE 8.2, named the node `pve1`, and enabled SSH. Reported it responding at `192.0.2.50` — a temporary address from their existing router; `blocks/foundation/network/` formalizes addressing later and hasn't run yet.
+Platform installed: **Proxmox VE 8.2**. Node name: `pve1`. Remote access: SSH, enabled during install. Address: `192.0.2.50` — temporary, assigned by the existing router. `blocks/foundation/network/` formalizes addressing afterwards and hasn't run yet.
 
-First connection, and verification against what I was told:
+First connection, verified against the work order:
 
-- Platform: Proxmox VE 8.2. Matches.
-- Memory: 32GB seen by the host. Matches.
-- Storage: both NVMe devices present. Matches the order.
-- Integrated graphics driving the console, PCIe x16 slot empty and available. Matches the plan for phase three.
+| Expected | Found | |
+|---|---|---|
+| Proxmox VE 8.2 | Proxmox VE 8.2 | match |
+| 32GB memory | 32GB seen by host | match |
+| 2 NVMe devices | 2 present | match |
+| PCIe x16 free, console on integrated graphics | slot empty, console on integrated | match |
 
 No drift. Recorded:
 

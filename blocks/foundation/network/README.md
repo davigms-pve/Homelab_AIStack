@@ -1,8 +1,11 @@
 # Network
 
 requires: [discovery]
+assumes: [network-hardware]
 
-The decision every domain block was quietly assuming someone else had already made. Before this block existed, `blocks/domains/proxmox-ai-stack/CHECKLIST.md` asked "which VLAN/bridge" as if it were that block's own question — it isn't. This block owns the network topology decision; domain blocks consume it.
+The decision every domain block was quietly assuming someone else had already made.
+
+*`network-hardware` applies only if you segment. Configuring VLANs on a router or switch is vendor-specific and not everyone wants to learn it — the fallback is to stay flat, which is a real supported choice rather than a lesser one. See `docs/block-schema.md`.* Before this block existed, `blocks/domains/proxmox-ai-stack/CHECKLIST.md` asked "which VLAN/bridge" as if it were that block's own question — it isn't. This block owns the network topology decision; domain blocks consume it.
 
 ## What this block produces
 
