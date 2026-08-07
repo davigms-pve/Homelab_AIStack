@@ -4,6 +4,17 @@ Format: one entry per phase/version tag, per the build cadence in [`docs/roadmap
 
 Versioning is pre-1.0 `0.x.y`. `1.0` requires at least one path dogfooded end-to-end against real hardware — see the versioning section in the roadmap for what that means concretely.
 
+## [Unreleased]
+
+### Added
+- `start-here/` — the entry point an agent is handed first. `TRAVERSAL.md` specifies how to read `.homelab-state.yml`, resolve `requires:`, pick the next block, and hand off to the right cadence; `README.md` is the human counterpart. It sits outside the tier system alongside `discovery/` and carries no CEP triple, because there's nothing in it to adapt. Deliberately not named `AGENTS.md.example` — that suffix means "filled template, find-and-replace it," and this file is followed verbatim.
+- `discovery/hardware-envelope.md` gained a **Consistency checks** section — six named conflicts an envelope can contain while every individual line looks fine (`ai-stack` wanted with no VRAM figure, fanless alongside a discrete GPU, low idle power alongside a discrete GPU, a VRAM target the budget can't reach, media with fixed storage, and a beginner comfort level facing GPU passthrough). Each is surfaced to the person rather than resolved silently.
+
+### Fixed
+- **`requires:` was declared everywhere but resolvable nowhere.** It appeared in four shapes — tiered path, bare folder name, discovery-topic name, and a prose `none — this is the starting point.` — of which `docs/block-schema.md` documented two. No file stated how a tiered path maps to a flat `blocks:` status key (last path segment), and `requires: [needs]` resolved to nothing at all, because `docs/manifest-schema.md` deliberately gives individual discovery topics no status entry. Both resolution paths are now specified in `start-here/TRAVERSAL.md`, discovery topics resolve by the `decisions:` keys they produce, and `discovery/needs.md` is normalized to `requires: none`.
+- **The worked example didn't survive its own pipeline.** `discovery/hardware-envelope.md` left the GPU fork open ("PCIe x16 slot **or** built-in GPU… flag as follow-up") and preferred sub-15W idle, while `docs/manifest-schema.md` showed `gpu: discrete-required`, `vram_gb: 12`, and `idle_power_w: 35` for the same fictional persona. Running discovery exactly as written could not produce the manifest example. The envelope example now resolves both conflicts in front of the reader — showing the agent walking the person through each tradeoff — and lands on the manifest's values, restoring the continuity the blocks claim.
+- The same example's internal contradiction (a PCIe x16 slot alongside a sub-15W idle target and a fanless preference) is resolved, and that class of error is now caught by the named consistency checks rather than left to reviewer attention. Closes roadmap gap #4.
+
 ## [0.3.0] — 2026-08-06
 
 First tagged release. Phases 0–3, 5, and 7 of the build cadence landed together on one branch rather than at separate commits, so they close under a single tag — see the phase table in [`docs/roadmap.md`](docs/roadmap.md). This is a `0.x` release in the sense the versioning policy defines: the structure is real and usable, but all three blocks ship `unverified` and the open gaps are tracked in the roadmap.

@@ -10,7 +10,7 @@ Blocks are organized under `blocks/` by what kind of thing they decide or build,
 - **`blocks/core-services/`** *(named here, not yet built — see below)* — shared services domain blocks depend on but don't want to reimplement each time: a reverse proxy, internal DNS, SSO/auth. Sometimes called "platform services" in enterprise/platform-engineering vocabulary; this repo uses "core services," the term more common in homelab content, for the same thing. **No blocks exist here yet, and the directory isn't created until one does** — an empty tier folder is the stub-farm mistake this repo already avoids elsewhere. Candidates, tracked in `docs/roadmap.md`: `reverse-proxy`, `dns`, `auth-sso`.
 - **`blocks/domains/`** — the end-user-facing workloads: `proxmox-ai-stack` today, media/home-automation/personal-cloud later. These are what someone actually came here to build; foundation and core-services exist to support them.
 
-`discovery/` sits outside all three tiers — it's not a block in this sense, it's what happens before any tier is entered.
+`discovery/` sits outside all three tiers — it's not a block in this sense, it's what happens before any tier is entered. `start-here/` sits outside them too, and isn't a block either: it holds the traversal instructions an agent reads to work out which tier it should be in at all. Neither carries a CEP triple, and neither should grow one.
 
 ## Files
 
@@ -34,7 +34,16 @@ Every block's `README.md` states its prerequisites in a `requires:` line near th
 requires: [foundation/host-platform, foundation/network]
 ```
 
-`discovery` (no tier prefix, since it sits outside the tier system) is the one exception: `requires: [discovery]`.
+That's the form domain blocks use. There are four in total, because discovery topics and the graph root declare prerequisites too:
+
+| Shape | Example | Where |
+|---|---|---|
+| Tiered path | `requires: [foundation/host-platform, foundation/network]` | domain block `README.md` |
+| Folder name, no tier prefix | `requires: [discovery]` | both foundation blocks — `discovery/` sits outside the tier system |
+| Discovery topic name | `requires: [needs]` | files inside `discovery/` |
+| No prerequisite | `requires: none` | `discovery/needs.md`, the root of the graph |
+
+**How each resolves against `.homelab-state.yml` is specified in [`../start-here/TRAVERSAL.md`](../start-here/TRAVERSAL.md)**, which is what an agent actually reads to navigate. Two rules matter enough to name here as well, because a new block has to stay compatible with them: a tiered path maps to a `blocks:` status key by **taking its last path segment**, and individual discovery topics have **no `blocks:` entry at all** — they resolve by checking whether the `decisions:` keys they produce are present. If you add a block, keep its name unique across tiers so the last-segment rule can't collide.
 
 This exists because blocks compose: choosing media and an AI stack together changes what the hardware envelope needs to account for (storage *and* VRAM), and a domain block like the AI stack can't be reasoned about before the host platform and network are both decided. An agent — or a contributor — should be able to read `requires:` and know what has to be resolved first, and where to find it. A block with an unstated dependency is a bug — which is exactly what motivated splitting `network` out as its own foundation block in the first place.
 

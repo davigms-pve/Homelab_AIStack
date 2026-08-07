@@ -1,6 +1,8 @@
 # Needs discovery
 
-requires: none — this is the starting point.
+requires: none
+
+This is the root of the dependency graph — nothing precedes it.
 
 The first thing an agent should figure out isn't a technology, it's what the person actually wants to run and how comfortable they are getting there. This drives every later block. Follow the Discovery & Advisory Cadence in `docs/methodology.md`: one question at a time, calibrate depth to comfort level, summarize back periodically, write confirmed answers to `.homelab-state.yml` / `HOMELAB.md` immediately.
 

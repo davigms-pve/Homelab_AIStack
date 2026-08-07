@@ -10,7 +10,9 @@ This is not a runnable docker-compose stack and not a curated link list. It's th
 
 ## Start here
 
-If you have nothing set up yet — no hardware decided, maybe not even an AI tool — start at [`discovery/`](discovery/):
+**Hand your AI agent [`start-here/TRAVERSAL.md`](start-here/TRAVERSAL.md).** That's the whole first step — it tells the agent how to read your current state, work out what's already decided, resolve what has to happen before what, and open the right file next. A fresh session picks up where the last one stopped instead of re-interviewing you.
+
+If you'd rather see the path yourself first, it runs through [`discovery/`](discovery/):
 
 1. [`discovery/needs.md`](discovery/needs.md) — what you actually want to run, and how comfortable you are getting there.
 2. [`discovery/ai-tooling.md`](discovery/ai-tooling.md) — what kind of AI tool you need to keep using these templates.
@@ -18,7 +20,7 @@ If you have nothing set up yet — no hardware decided, maybe not even an AI too
 
 From there: the **foundation** tier decides what runs on the bare metal and how it's networked — [`blocks/foundation/host-platform/`](blocks/foundation/host-platform/) and [`blocks/foundation/network/`](blocks/foundation/network/) — then a **domain** block like [`blocks/domains/proxmox-ai-stack/`](blocks/domains/proxmox-ai-stack/) builds on top of both.
 
-Hand any of these files to your AI agent and let it guide the conversation — that's the intended way to use this repo, not reading it top to bottom yourself first.
+Letting your agent guide the conversation is the intended way to use this repo — not reading it top to bottom yourself first. `start-here/TRAVERSAL.md` is what makes that work; handing over an individual file below also works if you already know where you are.
 
 ## How it's organized
 
@@ -29,7 +31,8 @@ Blocks declare what they depend on (`requires:`), so choices compose instead of 
 As you go, an agent maintains two files in *your own* repo, next to your own `AGENTS.md` — `.homelab-state.yml` (machine-readable progress) and `HOMELAB.md` (a plain-language log of what was decided and why). See [`docs/manifest-schema.md`](docs/manifest-schema.md).
 
 ```
-discovery/                        — start here if nothing is set up yet
+start-here/                       — hand TRAVERSAL.md to your agent; it routes everything below
+discovery/                        — the first stop, if nothing is set up yet
 blocks/
   foundation/                     — decisions nearly everything else depends on
     host-platform/                — isolation-, storage-, simplicity-, or raw-control-first
