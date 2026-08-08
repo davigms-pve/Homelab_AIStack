@@ -1,8 +1,11 @@
 # Network
 
 requires: [discovery]
+assumes: [network-hardware]
 
-The decision every domain block was quietly assuming someone else had already made. Before this block existed, `blocks/domains/proxmox-ai-stack/CHECKLIST.md` asked "which VLAN/bridge" as if it were that block's own question — it isn't. This block owns the network topology decision; domain blocks consume it.
+The decision every domain block was quietly assuming someone else had already made.
+
+*`network-hardware` applies only if you segment. Configuring VLANs on a router or switch is vendor-specific and not everyone wants to learn it — the fallback is to stay flat, which is a real supported choice rather than a lesser one. See `docs/block-schema.md`.* Before this block existed, `blocks/domains/proxmox-ai-stack/CHECKLIST.md` asked "which VLAN/bridge" as if it were that block's own question — it isn't. This block owns the network topology decision; domain blocks consume it.
 
 ## What this block produces
 
@@ -18,7 +21,7 @@ Physical switch/router-side VLAN tagging is vendor-specific (UniFi, pfSense, a g
 
 ## When to use this
 
-Right after `discovery/`, alongside or right before `blocks/foundation/host-platform/` — the two foundation blocks don't have a strict order relative to each other, but both must be resolved before any domain block starts, since domain blocks declare `requires: [foundation/host-platform, foundation/network]`.
+**Last of the three foundation blocks**, after `blocks/foundation/host-platform/` has chosen a platform and `blocks/foundation/hardware-bringup/` has produced a machine that answers. The order isn't arbitrary: the checklist below asks which physical NICs the host has and which one carries the VLAN trunk, and nobody can answer that about a machine that doesn't exist yet. All three must be resolved before any domain block starts, since domain blocks declare `requires: [foundation/host-platform, foundation/hardware-bringup, foundation/network]`.
 
 ## Validation
 

@@ -14,8 +14,9 @@ The **E** is the part that gets hollowed out by accident. A filled example means
 
 ## Conventions
 
-- Every folder that holds agent-oriented data (`CHECKLIST.md`, `AGENTS.md.example`) also holds a plain-language `README.md` as the human entry point. Don't add one without the other.
-- Blocks declare a `requires:` list of prerequisite blocks. Never write a block that silently assumes a prior decision.
+- Every folder that holds agent-oriented data (`CHECKLIST.md`, `AGENTS.md.example`, `TRAVERSAL.md`) also holds a plain-language `README.md` as the human entry point. Don't add one without the other.
+- Blocks declare a `requires:` list of prerequisite blocks. Never write a block that silently assumes a prior decision. Declaring isn't enough on its own — `start-here/TRAVERSAL.md` specifies how those declarations resolve against `.homelab-state.yml`, so a new block has to keep its name unique across tiers and document which `decisions:` keys it writes.
+- The `.example` suffix means "filled template, adapt it via `PLACEHOLDERS.md`." Don't use it for files an agent follows verbatim — that's what `start-here/TRAVERSAL.md` is, and why it isn't named `AGENTS.md.example`.
 - Any link to a runnable stack must point at an official/vendor source (see `CONTRIBUTING.md`). Never link a third-party reimplementation.
 - Discovery and hardware/tooling guidance state *criteria*, never brand rankings or specific model picks — those go stale in months.
 - `docs/methodology.md` is the single source for the Discovery & Advisory Cadence and the Agent Operating Cadence. Reference it from blocks; never restate it.

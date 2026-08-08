@@ -12,7 +12,7 @@ verified-against: n/a
 ## What discovery produced
 
 - **Wants:** `[ai-stack, media]`, priority `ai-stack`. Media is wanted later, not now.
-- **Comfort level:** `beginner-docker` — has run `docker compose` from a tutorial, has never used a hypervisor.
+- **Comfort level:** `beginner` — has run `docker compose` from a tutorial, has never used a hypervisor.
 - **Budget band:** `under-1000`. Apartment, so quiet matters; closet shelf, so no rackmount.
 - **Hardware envelope:** 6–8 cores, 32GB RAM, one discrete GPU with 12GB VRAM, 2+ drive bays, low idle power.
 
@@ -22,7 +22,7 @@ verified-against: n/a
 
 The reasoning, recorded because it's the part worth re-reading in six months: two workloads are wanted, not one, and they have genuinely different failure profiles — an AI stack that gets restarted and re-tuned constantly, and a media stack that should just keep running. VM isolation means experimenting on one can't take down the other. The GPU was the tiebreaker: passing it through to a single dedicated VM is cleaner than sharing one card across containers on a bare host, and it keeps the option of moving the AI VM to different hardware later without rebuilding it.
 
-The cost was acknowledged openly: a `beginner-docker` comfort level plus a hypervisor means IOMMU config and virtual networking are both new. That's a real learning curve, accepted deliberately rather than stumbled into. Had only the AI stack been wanted, bare Docker on Debian would have been the right call and this block would have said so — Proxmox is not the default here.
+The cost was acknowledged openly: a `beginner` comfort level plus a hypervisor means IOMMU config and virtual networking are both new. That's a real learning curve, accepted deliberately rather than stumbled into. Had only the AI stack been wanted, bare Docker on Debian would have been the right call and this block would have said so — Proxmox is not the default here.
 
 ## Cadence
 

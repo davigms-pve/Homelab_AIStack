@@ -12,7 +12,7 @@ Discovery exists because the alternative — jumping straight to "install Proxmo
 
 ## How to use these
 
-Hand the file to your AI agent and let it interview you, one question at a time. That's the intended path — these are written as agent instructions, not as an article to read straight through. If you'd rather answer them yourself first and hand the results over, that works too.
+If your agent is already following [`../start-here/TRAVERSAL.md`](../start-here/TRAVERSAL.md), it arrives here on its own and you don't need to do anything. Otherwise, hand the file to your AI agent and let it interview you, one question at a time. That's the intended path — these are written as agent instructions, not as an article to read straight through. If you'd rather answer them yourself first and hand the results over, that works too.
 
 The agent should follow the **Discovery & Advisory Cadence** in [`../docs/methodology.md`](../docs/methodology.md): one question at a time, matched to how technical you said you are, explaining *why* something matters rather than just extracting an answer from you. "I don't know" is a valid answer to any of it.
 

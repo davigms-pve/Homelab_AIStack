@@ -21,7 +21,7 @@ The decision, and why it was made, gets written to `.homelab-state.yml` / `HOMEL
 
 ## When to use this
 
-Right after discovery, before touching any domain block. Every domain block in this repo declares `requires: [foundation/host-platform, foundation/network]` — this, alongside `blocks/foundation/network/`, is what they all build on.
+**First of the three foundation blocks**, right after discovery. This one chooses the platform; `blocks/foundation/hardware-bringup/` then gets a machine built and reachable, and `blocks/foundation/network/` formalizes addressing once there's a host to address. Every domain block declares `requires: [foundation/host-platform, foundation/hardware-bringup, foundation/network]` — all three are what they build on.
 
 ## Validation
 

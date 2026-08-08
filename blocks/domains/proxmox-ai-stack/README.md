@@ -1,8 +1,11 @@
 # Proxmox + AI stack
 
-requires: [foundation/host-platform, foundation/network]
+requires: [foundation/host-platform, foundation/hardware-bringup, foundation/network]
+assumes: [physical-assembly, bios-firmware]
 
 *Domain-tier block — see `docs/block-schema.md` for what that means.*
+
+*`physical-assembly` because a card has to go into the machine; `bios-firmware` because IOMMU has to be enabled for passthrough. Fallbacks: a shop can install the card, and an agent can walk the firmware settings step by step. Worth saying out loud before starting — GPU passthrough is the most failure-prone thing in this repo, and on single-GPU hardware a wrong step can leave the machine without a usable console.*
 
 This repo's first fully-realized domain block: Proxmox VM/LXC setup with GPU passthrough, running a local AI stack (LLM inference plus a chat interface) on top. It's the flagship example because it's heavier and more failure-prone than a docker-only setup — isolation, passthrough, and networking all have to work together — so it demonstrates the CEP method and the Agent Operating Cadence somewhere they actually get exercised.
 

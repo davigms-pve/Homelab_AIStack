@@ -8,7 +8,7 @@ To make it yours: copy it, then replace each value below with your own.
 |---|---|---|
 | `proxmox` | The platform actually chosen | Your own answer, on whichever axis drove it — `bare-docker`, `proxmox`, `xcp-ng`, `truenas-scale`, `openmediavault`, `casaos`, or whatever you land on |
 | `[ai-stack, media]`, priority `ai-stack` | What you want to run, and what comes first | `discovery/needs.md` |
-| `beginner-docker` | Your stated technical comfort level | `discovery/needs.md` — be honest, it changes the recommendation |
+| `beginner` | Your stated technical comfort level | `discovery/needs.md` — be honest, it changes the recommendation |
 | `under-1000`, apartment, closet shelf | Budget and physical constraints | `discovery/needs.md` |
 | 6–8 cores / 32GB / 12GB VRAM / 2+ bays | The hardware envelope | `discovery/hardware-envelope.md` |
 | `true` (gpu_passthrough) | Whether a GPU goes to one isolated VM | Your own answer — `false` is common and fine |
