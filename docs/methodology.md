@@ -45,15 +45,20 @@ Governs any stage where the agent is acting on real infrastructure, where a wron
 
 ## Validation and staleness
 
-You can't dogfood a contributor's hardware. Validation is two-tiered:
+You can't dogfood a contributor's hardware, and pre-1.0 this repo frequently can't dogfood its own either. Every block lands on exactly one of three outcomes:
 
-- **First-party blocks** are exercised in an actual live agent session before merge — that session *is* the test.
-- **Third-party contributions** carry frontmatter on the filled example:
+- **Exercised live** — a real agent session against real hardware before merge. That session *is* the test, and it's the only outcome that counts toward 1.0.
+- **Attested** — carries frontmatter on the filled example:
   ```
   last-verified: 2026-08-06
   verified-against: proxmox-8.2 / docker-compose-2.29
   ```
-  Anything without current frontmatter is marked **unverified** in its `README.md`. See `CONTRIBUTING.md` for the Definition of Done this maps to.
+  The normal path for third-party contributions, where the contributor has hardware the maintainers don't.
+- **Explicitly unverified** — marked so in the block's own `README.md` *and* in its example's frontmatter, with the gap tracked in [`roadmap.md`](roadmap.md). Legitimate pre-1.0 and nowhere else: `1.0` requires at least one complete path exercised live.
+
+**The split is about whether anyone has run it against real hardware — not about who wrote it.** First-party blocks can ship unverified, and every block in this repo currently does. That's the accepted cost of building structure before hardware is available, and it's only defensible because the label is prominent and the gap is tracked. Shipping unverified *quietly* is the thing this repo doesn't do.
+
+See `CONTRIBUTING.md` for the Definition of Done these map to.
 
 ## Official sources only
 
