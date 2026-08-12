@@ -45,3 +45,22 @@ This block doesn't decide network topology — `blocks/foundation/network/` alre
 - **Which LLM runtime and chat interface** — official sources only, confirm current install instructions from their own docs rather than assuming they match `AGENTS.md.example` verbatim (software changes faster than this repo does).
 - **Model size vs. available VRAM** — from the hardware envelope; don't let the agent pull a model larger than the passed-through GPU can hold. Oversized models don't error out cleanly, they fall back to CPU and get very slow, which reads like a performance problem rather than a configuration one.
 - **Port(s) exposed** and whether they're reachable only on the internal network or intentionally exposed further — confirm intent before opening anything up.
+
+## Done when — the live artifacts
+
+This block is finished when each of these produces a real result, not when the steps have been performed. "Everything ran without errors" is not one of them; a container can start cleanly having loaded nothing at all, and its logs will look perfect.
+
+- **Passthrough:** `nvidia-smi` (or the vendor equivalent) *inside the VM* reports the card and its VRAM.
+- **Container GPU access:** a vendor image run with `--gpus all` prints the card from inside the container.
+- **Inference:** a real request to the LLM endpoint returns a completion, **and** GPU utilization is non-zero while it runs. Utilization is the part that matters — a completion alone is also what a silent CPU fallback produces, just slower.
+- **Chat interface:** it loads over the network from another machine on the intended segment, and a prompt typed into it comes back answered.
+- **Blast radius:** every VM that was running before is still running. Check, don't assume.
+
+## Operational facts worth carrying forward
+
+These belong in the `AGENTS.md` of the user's own repo once this block is done — the file every future session loads — not just in this session's narrative. See `blocks/foundation/agent-operations/`.
+
+- **Pin container images by digest, not by floating tag.** Tags drift on every pull and nothing flags it, so a stack that worked yesterday can quietly change underneath you.
+- **Before removing a container that was started with a bare `docker run`, capture its full command** — `docker inspect --format '{{json .Config.Cmd}}' <name>`. It's unrecoverable after removal, and a recreate that loses its arguments can come up "healthy" while doing nothing.
+- **Escape `$` as `$$` in `docker-compose.yml` environment values.** Compose interpolates silently, so a secret containing `$` gets truncated with no error at all.
+- **Record the measured idle and load power draw of the GPU.** It's the number the rest of the machine was sized around, and nobody can reconstruct it later without re-measuring.

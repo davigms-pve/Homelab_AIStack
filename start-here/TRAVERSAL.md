@@ -32,6 +32,10 @@ A prerequisite is satisfied when its status is `done`. It is **also** satisfied 
 
 **Don't trust the status blindly.** Where `excluded` satisfies a requirement, confirm the thing it stands for actually exists before proceeding — for `hardware-bringup` that means `decisions.host_access` is present and the host genuinely answers. An `excluded` status with no working host behind it is someone who skipped a step, not someone who didn't need it.
 
+**`agent-operations: excluded` is the one case where the underlying fact isn't infrastructure.** Excluding it is legitimate for someone who already operates under their own conventions — an experienced person with an established `AGENTS.md` and their own way of tracking findings doesn't need this repo's version imposed on top. It is **not** legitimate as "skip the one that isn't building anything," because everything downstream assumes *some* operating contract exists: the state file will be written by many sessions, and nothing else in this repo governs how it stays true.
+
+So before accepting it: confirm either `decisions.operations` is recorded, or `HOMELAB.md` says plainly that the person operates under their own conventions instead. If neither is there, this wasn't a decision — say so and offer the two-question version, which takes one exchange.
+
 This is separate from the rule below about never *proposing* an excluded block. Satisfying a dependency and being offered as the next thing to work on are different questions.
 
 The tiered-path and flat-key forms are deliberately different shapes — `requires:` navigates this repo, `blocks:` just tracks status. The last-path-segment rule is the whole bridge between them; block names are unique across tiers, so it can't collide.
@@ -55,7 +59,9 @@ The tiered-path and flat-key forms are deliberately different shapes — `requir
 Walk in this order and stop at the first thing that isn't satisfied:
 
 1. **Discovery**, if `blocks: discovery` isn't `done`. Work the topics in dependency order: `needs` first, then `hardware-envelope` and `ai-tooling` (which both require `needs` but not each other).
-2. **Foundation blocks, in this order** — [`host-platform`](../blocks/foundation/host-platform/) decides what runs on the metal, [`hardware-bringup`](../blocks/foundation/hardware-bringup/) gets a machine built and reachable, [`network`](../blocks/foundation/network/) formalizes topology and addressing. The order matters here in a way it didn't before: you can't build to a platform you haven't chosen, and `network` asks which physical NICs the host has, which nobody knows until it exists. All three must be satisfied before any domain block.
+2. **Foundation blocks, in this order** — [`agent-operations`](../blocks/foundation/agent-operations/) sets the contract for how the two tracking files are kept true, [`host-platform`](../blocks/foundation/host-platform/) decides what runs on the metal, [`hardware-bringup`](../blocks/foundation/hardware-bringup/) gets a machine built and reachable, [`network`](../blocks/foundation/network/) formalizes topology and addressing. The order matters: you can't build to a platform you haven't chosen, and `network` asks which physical NICs the host has, which nobody knows until it exists. All four must be satisfied before any domain block.
+
+   **`agent-operations` goes first and takes one short conversation.** It looks like a day-2 concern parked at the front, and it is — deliberately. Its contract governs `.homelab-state.yml` and `HOMELAB.md`, which you started writing during discovery, and a contract adopted after those files have grown is a cleanup job instead of a contract. Two questions, then it's done.
 3. **A domain block** whose `requires:` are now all satisfied, chosen by the user's `priority` field — not by what's most interesting to build.
 
 Four rules that override the walk:
@@ -64,6 +70,13 @@ Four rules that override the walk:
 - **If a prerequisite is `in-progress`, finish it before starting anything downstream.** A half-decided host platform is worse input than an undecided one, because it looks settled.
 - **If a prerequisite is `awaiting-human`, report position and stop. Do not try to finish it.** `awaiting-human` means the next move is physically theirs — parts haven't arrived, the machine isn't assembled, the OS isn't installed. Say where things stand, restate what they're waiting on from the `awaiting:` record, and offer to help with anything that doesn't depend on it. Treating this like `in-progress` and pushing forward is how an agent ends up inventing state it can't see.
 - **If `priority` names a category with no block, say so plainly and don't substitute.** Not every category `discovery/needs.md` offers has a block yet. Tell them which of their wants this repo can and can't take them through, offer to work the covered ones, and point them at the block-gap issue template. Do **not** quietly promote their second choice and proceed as though it were their first — they'll discover the swap later and won't know what else was decided on their behalf.
+
+### Once a block is `done`, the operating contract is live
+
+`agent-operations` is the only foundation block whose output keeps applying after it closes. From the moment it's `done`, two of its rules bind every later session, including yours:
+
+- **If `handoff:` in `.homelab-state.yml` is non-empty, draining it is your first task** — before the walk above resumes, not after the interesting work.
+- **`next:` holds at most three items, and every open item carries a reference.** If you find it over the cap or an item without one, that's the contract already slipping; fix it as you pass through.
 
 ## Step 4 — check `assumes:` before entering the block
 
