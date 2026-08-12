@@ -31,6 +31,16 @@ New categories are welcome — see `docs/roadmap.md` for what's already planned.
 
 This split is deliberate, and it comes from field experience: **a rule that isn't mechanically enforced gets broken by a future contributor, or a future session, no matter how prominently it's written down.** Everything above that a machine can check, a machine checks. What's left for human review is genuinely judgment — whether the example *reads* as a finished file, whether the checklist would actually let an agent finish the job, whether guidance stayed criteria rather than picks. Don't add checklist items that a script could enforce; write the script instead.
 
+## What happens to a filed issue
+
+This repo tracks its own open work as gaps in `docs/roadmap.md`, not as GitHub issues — deliberately, because an agent handed this repo reads that file and does not go looking for an issue tracker. Issues are the **inbound** path, and they need routing or they stop at the website:
+
+- **A block gap or inaccuracy** becomes a numbered `G` gap in `docs/roadmap.md`, linked back to the issue. The issue can then be closed; the gap is the durable record.
+- **A dogfood report** is evidence, and it's the only route to `L4`. Its findings split the same way any finding does: corrections go into the block, anything unresolved becomes a gap, and the report itself is the artifact a rung points at — so it stays open, or gets linked from `evidence:`, rather than being summarized and discarded.
+- **Either one arriving with no roadmap entry afterwards is the failure mode**, not a backlog. Someone took the trouble to tell you what broke; a thank-you and a closed tab loses it.
+
+Gap ids are stable and never reused, so a link to one stays valid after later gaps close.
+
 ## Pull requests
 
 Use the PR template — it includes the same checklist above as an attestation. A reviewer should be able to check every box against the diff without guessing. Boxes CI already covers are marked as such, so review attention goes to the ones it can't.
