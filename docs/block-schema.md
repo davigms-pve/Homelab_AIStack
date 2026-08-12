@@ -6,7 +6,7 @@ A "block" is this repo's unit of content. Every block, present or future, follow
 
 Blocks are organized under `blocks/` by what kind of thing they decide or build, not dumped in flat. This exists because the flat structure hid a real bug: `blocks/domains/proxmox-ai-stack/CHECKLIST.md` used to ask "which VLAN?" as if it were that block's own question, when it's a decision nothing owned. Tiering makes each block's place in the dependency order visible instead of implicit.
 
-- **`blocks/foundation/`** — decisions nearly every domain block depends on: `host-platform` (OS/hypervisor), `hardware-bringup` (getting a real machine built and reachable), `network` (topology, addressing). Mostly decision-layer (Discovery & Advisory Cadence), with a thin layer of real execution once a choice is made (installing the OS, creating a bridge).
+- **`blocks/foundation/`** — decisions nearly every domain block depends on: `agent-operations` (how the tracking files are kept true over months), `host-platform` (OS/hypervisor), `hardware-bringup` (getting a real machine built and reachable), `network` (topology, addressing). Mostly decision-layer (Discovery & Advisory Cadence), with a thin layer of real execution once a choice is made (installing the OS, creating a bridge). `agent-operations` is the odd one — it decides nothing about infrastructure and instead sets the operating contract every later session inherits, which is why it sits first in the tier despite being a day-2 concern.
 - **`blocks/core-services/`** *(named here, not yet built — see below)* — shared services domain blocks depend on but don't want to reimplement each time: a reverse proxy, internal DNS, SSO/auth. Sometimes called "platform services" in enterprise/platform-engineering vocabulary; this repo uses "core services," the term more common in homelab content, for the same thing. **No blocks exist here yet, and the directory isn't created until one does** — an empty tier folder is the stub-farm mistake this repo already avoids elsewhere. Candidates, tracked in `docs/roadmap.md`: `reverse-proxy`, `dns`, `auth-sso`.
 - **`blocks/domains/`** — the end-user-facing workloads: `proxmox-ai-stack` today, media/home-automation/personal-cloud later. These are what someone actually came here to build; foundation and core-services exist to support them.
 
@@ -31,7 +31,7 @@ Two of the three discovery topics legitimately have nothing to swap, and say so 
 Every block's `README.md` states its prerequisites in a `requires:` line near the top, using the tiered path:
 
 ```
-requires: [foundation/host-platform, foundation/hardware-bringup, foundation/network]
+requires: [foundation/agent-operations, foundation/host-platform, foundation/hardware-bringup, foundation/network]
 ```
 
 That's the form domain blocks use. There are four in total, because discovery topics and the graph root declare prerequisites too:
@@ -47,7 +47,7 @@ That's the form domain blocks use. There are four in total, because discovery to
 
 This exists because blocks compose: choosing media and an AI stack together changes what the hardware envelope needs to account for (storage *and* VRAM), and a domain block like the AI stack can't be reasoned about before the platform is chosen, a machine exists to run it on, and the network is decided. An agent — or a contributor — should be able to read `requires:` and know what has to be resolved first, and where to find it. A block with an unstated dependency is a bug — which is exactly what motivated splitting `network` out as its own foundation block in the first place.
 
-Note: `requires:` paths and the `blocks:` keys in `.homelab-state.yml` are deliberately different shapes. `requires:` is for navigating this repo, so it uses full tiered paths. `.homelab-state.yml`'s `blocks:` map just needs unique status keys, so it stays flat (`host-platform`, `hardware-bringup`, `network`, `proxmox-ai-stack`) — see `docs/manifest-schema.md`.
+Note: `requires:` paths and the `blocks:` keys in `.homelab-state.yml` are deliberately different shapes. `requires:` is for navigating this repo, so it uses full tiered paths. `.homelab-state.yml`'s `blocks:` map just needs unique status keys, so it stays flat (`agent-operations`, `host-platform`, `hardware-bringup`, `network`, `proxmox-ai-stack`) — see `docs/manifest-schema.md`.
 
 ## `assumes:` — what the *human* has to be able to do
 
@@ -87,11 +87,18 @@ This is the rule most easily broken by accident. A file full of `<<NODE_NAME>>` 
 
 ## Validation frontmatter
 
-`AGENTS.md.example` carries, once validated:
+Every `AGENTS.md.example` carries a rung — including a brand-new block, which starts at `L0`. The frontmatter is never absent; "no frontmatter" and "checked but not written down" are indistinguishable, and that ambiguity is what the rungs exist to remove.
 
 ```yaml
-last-verified: 2026-08-06
-verified-against: proxmox-8.2 / docker-compose-2.29
+---
+verification: L0
+last-verified: n/a
+verified-against: n/a
+evidence: n/a
+---
 ```
 
-A block without current frontmatter is marked **unverified** in its `README.md`. See `docs/methodology.md` for the validation rules this maps to.
+The five rungs, what each requires, and the exact field rules are in [`methodology.md`](methodology.md) — that's the single source. Two consequences for anyone writing a block:
+
+- **The rung goes in the block's `README.md` too**, in plain words, not just in frontmatter. Frontmatter is for the agent and for CI; the README sentence is for the person deciding whether to trust it.
+- **A rung above L0 needs its evidence artifact to exist** before the frontmatter claims it. `.github/workflows/validate-blocks.yml` fails the build if `evidence:` points at nothing.

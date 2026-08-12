@@ -21,8 +21,10 @@ The decision, and why it was made, gets written to `.homelab-state.yml` / `HOMEL
 
 ## When to use this
 
-**First of the three foundation blocks**, right after discovery. This one chooses the platform; `blocks/foundation/hardware-bringup/` then gets a machine built and reachable, and `blocks/foundation/network/` formalizes addressing once there's a host to address. Every domain block declares `requires: [foundation/host-platform, foundation/hardware-bringup, foundation/network]` — all three are what they build on.
+**The first infrastructure decision**, after discovery and after `blocks/foundation/agent-operations/` has set the operating contract (one short conversation). This one chooses the platform; `blocks/foundation/hardware-bringup/` then gets a machine built and reachable, and `blocks/foundation/network/` formalizes addressing once there's a host to address. Every domain block declares all four foundation blocks in its `requires:`.
 
 ## Validation
 
-**Unverified.** This block hasn't been walked end-to-end with a real person on real hardware yet, and its `AGENTS.md.example` carries `last-verified: unverified` to say so. Because it's a decision layer rather than an execution one, the risk is lower than in a domain block — but the honest status is the same.
+**Rung L0 — written from official documentation, never checked against anything.** See the ladder in `docs/methodology.md`. Because this is a decision layer rather than an execution one, the risk of being wrong is lower than in a domain block — but the rung is the same, and "lower risk" is not evidence.
+
+Worth naming: most of this block is criteria, and criteria can't be tested by running commands. What *can* be checked is whether each platform still fits the axis it's filed under, and whether its own project still recommends what this block says it does — which is an L1 desk-check, and the cheapest rung available to this block.

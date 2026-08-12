@@ -1,0 +1,27 @@
+name: validate blocks
+
+# A rule that isn't mechanically enforced gets broken by a future contributor
+# or a future agent session, however prominently it's written down. This is the
+# mechanism behind the Definition of Done in CONTRIBUTING.md — everything a
+# machine can check, a machine checks, so human review can spend itself on the
+# parts that need judgment.
+#
+# The script is plain bash and runs the same way locally:
+#     bash .github/scripts/validate-blocks.sh
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate block structure and verification rungs
+        run: bash .github/scripts/validate-blocks.sh

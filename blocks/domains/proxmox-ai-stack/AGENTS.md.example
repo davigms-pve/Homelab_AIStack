@@ -1,11 +1,13 @@
 ---
-last-verified: unverified
+verification: L0
+last-verified: n/a
 verified-against: n/a
+evidence: n/a
 ---
 
 # Proxmox + AI stack — filled example
 
-**Status: unverified.** This has not yet been dogfooded against real Proxmox hardware — see the gap list in [`../../../docs/roadmap.md`](../../../docs/roadmap.md). Treat the shape and cadence as reliable; treat exact commands as a starting point to check against current official docs, not as tested fact.
+**Status: L0 — written from official documentation, never checked against anything.** See the rungs in [`../../../docs/methodology.md`](../../../docs/methodology.md) and the gap list in [`../../../docs/roadmap.md`](../../../docs/roadmap.md). Treat the shape and cadence as reliable; treat every exact command below as a starting point to check against current official docs, not as tested fact.
 
 **Every value below is fake but realistic.** This file is a worked example, not a form — it reads as a finished `AGENTS.md` so you can see the shape you're aiming at. To adapt it, find-and-replace the fake values with your own using the table in [`PLACEHOLDERS.md`](PLACEHOLDERS.md).
 

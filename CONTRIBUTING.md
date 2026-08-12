@@ -12,7 +12,8 @@ A new or edited block is done when:
 - [ ] The `CHECKLIST.md` would actually let an agent finish the job. Ask concretely: given only this block, would an agent know how to *reach* the infrastructure, and what could it destroy by following the steps in order?
 - [ ] It declares its `requires:` prerequisites honestly, if any.
 - [ ] `AGENTS.md.example` references `docs/methodology.md`'s cadences rather than restating them.
-- [ ] It's been validated: either dogfooded live and marked so, or it carries `last-verified` / `verified-against` frontmatter, or — if genuinely untested — it's explicitly marked **unverified** in its `README.md`. Don't ship a block that silently implies it's been tried when it hasn't.
+- [ ] It declares a **verification rung** (`L0`–`L4`) in its `AGENTS.md.example` frontmatter *and* in plain words in its `README.md` — see `docs/methodology.md`. `L0` is a perfectly acceptable answer; an absent or overstated one isn't. Anything above `L0` names an evidence artifact that actually exists.
+- [ ] Any `assumes:` tag it declares ships with a stated fallback. A bare assumption is a bug — see `docs/block-schema.md`.
 - [ ] Any values in `AGENTS.md.example` are fake-but-realistic. No real IPs, hostnames, tokens, or serial numbers.
 - [ ] Discovery and hardware/tooling content states criteria, not brand picks — see `docs/index.md` for why.
 
@@ -24,6 +25,12 @@ Any link to a runnable stack, tool, or piece of software must point at its offic
 
 New categories are welcome — see `docs/roadmap.md` for what's already planned. Figure out which tier it belongs in first (`docs/block-schema.md`): `blocks/foundation/` for decisions nearly everything depends on, `blocks/core-services/` for shared services like a reverse proxy or DNS, `blocks/domains/` for end-user-facing workloads like media or home automation. Follow the existing blocks (`blocks/foundation/host-platform/`, `blocks/foundation/network/`, `blocks/domains/proxmox-ai-stack/`) as the reference shape rather than inventing a new structure.
 
+## What CI checks, and what it can't
+
+`.github/workflows/validate-blocks.yml` runs on every push and pull request. It enforces the mechanically checkable half of the list above: every block has its four files, every `AGENTS.md.example` carries well-formed verification frontmatter whose fields agree with its rung, no `<<TOKEN>>` placeholder survives in a filled example, and every `requires:` name resolves to a block or discovery topic that exists.
+
+This split is deliberate, and it comes from field experience: **a rule that isn't mechanically enforced gets broken by a future contributor, or a future session, no matter how prominently it's written down.** Everything above that a machine can check, a machine checks. What's left for human review is genuinely judgment — whether the example *reads* as a finished file, whether the checklist would actually let an agent finish the job, whether guidance stayed criteria rather than picks. Don't add checklist items that a script could enforce; write the script instead.
+
 ## Pull requests
 
-Use the PR template — it includes the same checklist above as an attestation. A reviewer should be able to check every box against the diff without guessing.
+Use the PR template — it includes the same checklist above as an attestation. A reviewer should be able to check every box against the diff without guessing. Boxes CI already covers are marked as such, so review attention goes to the ones it can't.

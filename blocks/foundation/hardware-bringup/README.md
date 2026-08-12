@@ -37,4 +37,6 @@ Then don't — this is a supported path, not a lesser one. The spec envelope dis
 
 ## Validation
 
-**Unverified.** Not yet walked with a real person buying real parts. The protocol was designed from a cold walkthrough that surfaced this gap (see `docs/roadmap.md`), not from a completed build — so treat the checkpoints as sound and the specific verification questions as a first draft.
+**Rung L0 — never walked with a real person buying real parts.** See the ladder in `docs/methodology.md`. The protocol was designed from a cold walkthrough that surfaced this gap (see `docs/roadmap.md`), not from a completed build — so treat the checkpoints as sound and the specific verification questions as a first draft.
+
+This is the one block the rungs can barely help. Every rung above L1 needs an artifact this block can't produce cheaply: there's no such thing as retro-validating a parts order that already happened correctly, and no virtual environment has a delivery date, a missing screw, or a drive that arrives dead. It climbs when somebody builds a machine and reports back, and not before — which is exactly why the community dogfood report matters more here than anywhere else in the repo.
