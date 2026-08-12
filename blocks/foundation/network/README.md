@@ -21,8 +21,8 @@ Physical switch/router-side VLAN tagging is vendor-specific (UniFi, pfSense, a g
 
 ## When to use this
 
-**Last of the three foundation blocks**, after `blocks/foundation/host-platform/` has chosen a platform and `blocks/foundation/hardware-bringup/` has produced a machine that answers. The order isn't arbitrary: the checklist below asks which physical NICs the host has and which one carries the VLAN trunk, and nobody can answer that about a machine that doesn't exist yet. All three must be resolved before any domain block starts, since domain blocks declare `requires: [foundation/host-platform, foundation/hardware-bringup, foundation/network]`.
+**Last of the four foundation blocks**, after `blocks/foundation/host-platform/` has chosen a platform and `blocks/foundation/hardware-bringup/` has produced a machine that answers. The order isn't arbitrary: the checklist below asks which physical NICs the host has and which one carries the VLAN trunk, and nobody can answer that about a machine that doesn't exist yet. All four must be resolved before any domain block starts, since that's what domain blocks declare in `requires:`.
 
 ## Validation
 
-**Unverified.** Not yet walked end-to-end with a real person on real hardware. See `docs/roadmap.md` for the open gap.
+**Rung L0 — written from official documentation, never checked against anything.** See the ladder in `docs/methodology.md` and the open gap in `docs/roadmap.md`. The specific untested assumption to watch: the worked example assumes 802.1Q trunking support that's never been confirmed against real consumer switch or router hardware, and that's not something nested virtualization can settle either.

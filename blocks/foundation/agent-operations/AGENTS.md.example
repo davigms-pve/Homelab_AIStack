@@ -1,0 +1,129 @@
+---
+verification: L0
+last-verified: n/a
+verified-against: n/a
+evidence: n/a
+---
+
+# Agent operations — filled example
+
+**Status: L0 — written from a real deployment's experience, but never adopted in a fresh repo and reported back.** See the rungs in [`../../../docs/methodology.md`](../../../docs/methodology.md).
+
+**Every value below is fake but realistic.** This is a worked example, not a form — it reads as the operating half of somebody's finished `AGENTS.md`, for the same fictional homelab the other blocks use (node `pve1`, AI VM `105`). To adapt it, find-and-replace using [`PLACEHOLDERS.md`](PLACEHOLDERS.md).
+
+---
+
+## Read this first, every session
+
+Two files hold everything you need to resume: `.homelab-state.yml` (what is true now) and `HOMELAB.md` (why it got that way). Read both before proposing anything — Agent Operating Cadence step 1, see [`../../../docs/methodology.md`](../../../docs/methodology.md).
+
+**If `handoff:` in `.homelab-state.yml` is non-empty, draining it is your first task.** Not after the interesting work. Before it. Each line either becomes a finding with an id, a `HOMELAB.md` log entry, or a fact recorded in this file — and then it comes out of `handoff:`.
+
+## What may live in `.homelab-state.yml`
+
+Current state only. It is a pointer, not a journal, and it is on a contract:
+
+- **No narrative.** If a sentence explains *why*, it belongs in `HOMELAB.md`. This file gets facts and statuses.
+- **Every open item carries a reference** — here that's a `HOMELAB.md` finding id like `2026-08-04-ollama-cold-start`, because this homelab has no issue tracker.
+- **`next:` holds at most three items.** A fourth means something has to be finished, dropped, or filed as a finding.
+- **`handoff:` is one-liners only**, parked by a session that ran out of time, drained by the next one.
+
+```yaml
+next:
+  - restore-test VM 105 from last night's backup   # 2026-08-04-untested-backups
+  - pin the two AI-stack images by digest          # 2026-08-09-floating-tags
+
+handoff:
+  - open-webui answered slowly twice around 22:00, unclear if load or thermal
+
+operations:
+  findings_tracker: homelab-md
+  audit_cadence: monthly
+  audit_last_run: 2026-08-01
+```
+
+Why a structural contract rather than a line limit: forcing this file to be short makes it fail by *silently deleting* something load-bearing, and nobody finds out which. Letting it fail by growing means the next maintenance pass can see the damage and repair it. Choose the failure you can detect.
+
+## Where a finding goes, the moment you find it
+
+Not at the end of the session — the session may not get an end it controls.
+
+| What you found | Where it goes |
+|---|---|
+| Evidence, reproduction steps, a ruled-out dead end | A dated finding in `HOMELAB.md` with an id: `### 2026-08-04-ollama-cold-start` |
+| The human-readable story and the *why* | The `HOMELAB.md` log |
+| An operative fact — a measured constant, a do-not-do, an environment gotcha | **This file**, under "Facts about this homelab" below |
+
+That last row is the one that gets skipped. A fact written only into session narrative *looks* recorded, and then leaves with the story it was embedded in when the narrative scrolls away. If a future session would need to know it, it goes in this file, which every session loads at start.
+
+## Decide before you execute
+
+Order: **investigate → gather evidence → write the decision down → execute.** Never the other way round; a decision record written afterwards turns into a justification for what already happened.
+
+For anything with real blast radius on `pve1`, the record goes in `HOMELAB.md` *before* the change and names four things: the plan, why, the expected result, and the rollback. Then execute the batch without narrating every routine step.
+
+**The stop rule is the half that matters.** An error, an unexpected result, or a premise that turns out to be false mid-batch is a decision fork to surface — not something to route around quietly. Real example from this homelab: a restart of the inference container was proposed on the theory that it had leaked VRAM; the evidence gathered to confirm that theory disproved it, and the restart — which would have interrupted every user of that service to fix nothing — was correctly withheld. "Stop and re-plan" is a successful outcome, not a failed one.
+
+Records are never silently edited. Supersede with a new dated entry, or amend with a dated note.
+
+## Never perform these — draft them and hand them over
+
+- **Granting yourself new credentials or access** of any kind.
+- **Interactive authentication flows** — vendor logins, OAuth consent, 2FA prompts, registry sign-in.
+
+Write out exactly what needs doing and let the owner do it. These stay owner-only no matter how much autonomy has been granted for everything else.
+
+## What counts as proof a change landed
+
+A live artifact. Nothing else:
+
+- **A real end-to-end request that returns the expected result.** Not a health endpoint, not a green container status.
+- **Clean logs are not proof.** VM `105`'s inference container once came back after a recreate with zero errors in its logs, having silently lost its model directory mount and loaded no models at all. `docker logs` looked perfect. A single real prompt exposed it in two seconds.
+- **A `git pull` without a service restart proves nothing** — the old process is still serving, and everything looks deployed.
+- **Documentation and plausibility are not proof.** A tool's own docstring described content it didn't serve.
+
+So checklist items here read *done when: `curl` against `192.0.2.105:11434` returns a completion and `nvidia-smi` shows non-zero GPU utilization during it* — not *verify the model loaded*.
+
+## Secrets: which direction does the file travel?
+
+- **Live → repo** (`/etc/pve/…` snapshots, compose files copied here as backups): redact before staging, grep the staged diff for key patterns, and **never copy the redacted mirror back over the live file**. That last one destroys the working config with placeholders.
+- **Repo → live** (`ai-stack/docker-compose.yml`, which deploys to VM `105`): **never redact** — a placeholder would ship. Secrets come from `ai-stack/.env`, which is gitignored.
+
+Every mirrored file starts with a provenance header so no session has to guess:
+
+```yaml
+# PROVENANCE: live -> repo. Mirror of /etc/pve/lxc/101.conf on pve1.
+# Redacted before commit. NEVER copy this file back over the live one.
+```
+
+## Facts about this homelab
+
+Facts about **this specific machine**, kept here because this is the file every session loads. Each one cost a real debugging session on it.
+
+Read these as an illustration of the *mechanism*, not as advice — several are correct here and wrong elsewhere, and the NFS line below is the clearest example of that. When adapting this file, empty the section and let your own fill it one debugging session at a time; see `PLACEHOLDERS.md`.
+
+- **Container images are pinned by digest, not tag.** Floating tags drift on every pull and nothing flags it. If you add a service, pin it the same way.
+- **Before removing a container that was started with a bare `docker run`, capture its full command** — `docker inspect --format '{{json .Config.Cmd}}' <name>`. It's unrecoverable after removal, and a recreate that loses its arguments can come up "healthy" while doing nothing useful.
+- **Escape `$` as `$$` in `docker-compose.yml` environment values.** Compose interpolates silently, so a secret containing `$` gets truncated with no error.
+- **The NAS share on VM `101` is mounted `soft`, deliberately.** A `hard` NFS mount freezes anything touching it in uninterruptible sleep when the server side goes away, and VM `101` reboots for updates. Do not "fix" this to `hard`.
+- **Cron drop-ins do not inherit the PATH you tested with.** Test any new job as cron will actually run it — `env -i PATH=/usr/bin:/bin SHELL=/bin/sh /opt/homelab/backup-check.sh` — because an interactive shell masks this failure completely.
+- **Syntax-check before restarting a service on new code** (`python3 -m compileall` for the metrics script). Restarting unparsed code turns a typo into an outage.
+- **VM `105`'s GPU idles at 12W and draws 180W under inference.** The UPS sizing assumed that; don't add a second GPU without revisiting it.
+
+## The monthly maintenance pass
+
+Runs on the first of the month, recorded as `operations.audit_last_run`. Fixed list — a review that happens "when something feels off" happens late:
+
+1. **Closed-item audit** — is everything marked `done` actually done?
+2. **State-file contract check** — narrative crept in? `next:` over three? `handoff:` still holding something from last month?
+3. **Doc-drift spot-check** — does `HOMELAB.md` still describe the system that exists?
+4. **Orphaned-finding sweep** — anything discovered and never routed?
+5. **The thin direction.** Did any session this month re-make a mistake already recorded, or re-try a dead end already ruled out? Each hit means the fact never reached the working session. Ask which: **missing** from this file (a routing failure — add it) or **present but unread** (a pointer-following failure — move it closer to the point of use). Fix the routing, not the instance.
+
+Findings from the pass get routed like any other finding, and the pass itself gets a one-line `HOMELAB.md` entry.
+
+## When you're about to write "never do X"
+
+Stop and ask whether X can be made **impossible or self-correcting** instead of prohibited. A written rule is advice to a future session that may have different context loaded; only a mechanism is a rule.
+
+In this homelab that turned into: `.env` files gitignored rather than "remember not to commit secrets", a `pre-commit` hook grepping staged diffs for key patterns, digests instead of "remember to check image versions", and a nightly restore-test rather than "remember to verify backups". Each replaced an instruction that had already been broken at least once.

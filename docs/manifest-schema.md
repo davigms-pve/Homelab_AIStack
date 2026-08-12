@@ -13,12 +13,20 @@ Current snapshot only, overwritten as state changes:
 ```yaml
 blocks:
   discovery: done
+  agent-operations: done
   host-platform: done
   hardware-bringup: done
   network: done
   proxmox-ai-stack: in-progress
   media: planned
   home-automation: excluded
+
+next:
+  - restore-test VM 105 from last night's backup   # 2026-08-04-untested-backups
+  - pin the two AI-stack images by digest          # 2026-08-09-floating-tags
+
+handoff:
+  - open-webui answered slowly twice around 22:00, unclear if load or thermal
 
 decisions:
   # recorded once, by Agent Operating Cadence step 0 — never re-asked once true
@@ -71,9 +79,28 @@ decisions:
   bridge_mapping:
     vmbr0.10: servers
 
+  # from blocks/foundation/agent-operations/
+  operations:
+    findings_tracker: homelab-md
+    audit_cadence: monthly
+    audit_last_run: 2026-08-01
+
   # from blocks/domains/proxmox-ai-stack/
   ai_vm_id: 105
 ```
+
+### The contract that keeps this file a pointer
+
+"Current snapshot only, overwritten as state changes" is an instruction, and instructions decay. In a real deployment operated this way, the equivalent file grew into a 984-line session journal that contradicted itself — the same work item listed as both done and open — and quietly swallowed findings that belonged in a tracker. A file that size cannot be kept consistent by an overwrite-each-session process, and no session ever decided to let it happen.
+
+What holds is a **structural** contract, owned and enforced by [`blocks/foundation/agent-operations/`](../blocks/foundation/agent-operations/):
+
+- **No narrative sections, ever.** If a sentence explains *why*, it belongs in `HOMELAB.md`. History belongs to that file and to git.
+- **Every open item carries a reference** — an issue number, or a `HOMELAB.md` finding id in `date-slug` form.
+- **`next:` holds at most three items.** More than three is a backlog, and a backlog belongs in the tracker.
+- **`handoff:` is one-liners only**, parked by a session that ran out of time — and **draining it is the next session's first task**, before any new work. A handoff nobody drains is just a slower journal.
+
+Structure rather than a line cap, for an asymmetric reason: forced compression fails by *silently deleting* a load-bearing fact and nobody learns which one, while bloat fails visibly and is repairable at the next maintenance pass. Structural rules also survive a weak session — they need shape-matching, not judgment about what to cut.
 
 ### Status values
 
@@ -110,6 +137,15 @@ The `blocks:` map uses short, flat, unique names — not the tiered folder paths
 `host_access` says **how** to reach a host and as whom. It must never carry **what proves you may** — no passwords, SSH private keys, API tokens, or recovery codes, and no paths that amount to the same thing. This file gets committed, shared with agents, pasted into chats, and read by future sessions; a credential in it is a credential everywhere.
 
 The same rule covers `HOMELAB.md`. Secrets live wherever the person already keeps secrets — an agent's job is to reference them, never to transcribe them.
+
+### Every other file: redact by direction of travel
+
+These two files are absolute. For everything else that ends up in a homelab repo — mirrored configs, compose files, unit files — the redaction question has one reliable test: **which way does this file flow?**
+
+- **Live → repo** (the repo copy is a backup or mirror): redact before staging, grep the staged diff for key patterns, and **never copy the redacted mirror back over the live file** — that replaces a working config with placeholders.
+- **Repo → live** (the repo copy is what deploys): **never redact**, because a placeholder would ship. Externalize the secrets into env or ignored files instead.
+
+Getting this backwards is destructive in both directions, which is why every mirrored file should carry a provenance header naming its direction — no session should have to infer it. `blocks/foundation/agent-operations/` owns the full rule.
 
 ### `machine_as_built` is not `hardware_envelope`
 
@@ -158,6 +194,12 @@ working on 01:00.0.
 ```
 
 The log records *why*, not just *what* — that's the part the state file can't carry, and it's what makes this file worth reading months later instead of just useful to the agent in the moment.
+
+Three rules keep it worth reading:
+
+- **Entries for anything with real blast radius are written *before* the change, not after** — plan, why, expected result, rollback. The order is investigate → evidence → decision record → execute, because a record written afterwards drifts into justification for what already happened.
+- **Entries are never silently edited.** Supersede a decision with a new dated entry, or amend it with a dated note. What was believed *when* has to stay legible, or the log stops being evidence and becomes a summary of the present.
+- **Findings get a stable id** — `### 2026-08-04-ollama-cold-start` — so `.homelab-state.yml` can reference one from an open item without copying its contents. This is what makes the two-file split work for someone with no issue tracker, which is most people following this repo.
 
 ## When these get written
 

@@ -1,6 +1,6 @@
 # Proxmox + AI stack
 
-requires: [foundation/host-platform, foundation/hardware-bringup, foundation/network]
+requires: [foundation/agent-operations, foundation/host-platform, foundation/hardware-bringup, foundation/network]
 assumes: [physical-assembly, bios-firmware]
 
 *Domain-tier block — see `docs/block-schema.md` for what that means.*
@@ -23,4 +23,6 @@ Which specific LLM runtime or chat UI to run isn't fixed here — `AGENTS.md.exa
 
 ## Validation
 
-**Unverified.** This block has not yet been dogfooded against real Proxmox hardware, and its `AGENTS.md.example` carries `last-verified: unverified` to say so. The structure, checklist, and cadence are deliberate; the exact commands are a starting point to check against current official docs, not tested fact. Once a live session validates it, that frontmatter gets a real `last-verified` / `verified-against` date and this section changes with it.
+**Rung L0 — written from official documentation, never checked against anything.** See the ladder in `docs/methodology.md`; the frontmatter on `AGENTS.md.example` says the same thing in machine-readable form. The structure, checklist, and cadence are deliberate; the exact commands are a starting point to check against current official docs, not tested fact.
+
+This is the block with the furthest to climb and the most to gain from each rung, because it's the only one that both executes destructive changes and depends on hardware behavior that documentation routinely gets wrong. Two things are worth knowing about how it will climb: a nested-virtualization run can reach the Proxmox install, VM creation, and the container layer, but **structurally cannot** reach GPU passthrough, IOMMU grouping, or firmware settings — so an L3 here will carry a non-empty `unreached:` list until it runs on real metal. And `docs/roadmap.md` names the specific commands most likely to be wrong, so that L0 reads as a prediction rather than a shrug.

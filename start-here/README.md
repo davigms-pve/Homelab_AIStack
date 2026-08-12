@@ -14,7 +14,7 @@ You don't need to read it yourself first, though nothing stops you — it's shor
 
 ## Why this exists as its own folder
 
-Without it, an agent handed this repo has to *infer* the order — that discovery comes before the foundation blocks, that all three foundation blocks come before any domain block, that they run in a particular order, and that a half-finished decision is worse than an unstarted one. Inferring works right up until it doesn't, usually somewhere expensive.
+Without it, an agent handed this repo has to *infer* the order — that discovery comes before the foundation blocks, that all four foundation blocks come before any domain block, that they run in a particular order, and that a half-finished decision is worse than an unstarted one. Inferring works right up until it doesn't, usually somewhere expensive.
 
 It's a separate folder rather than a root file because the repo's root `AGENTS.md` is for people editing *this repo*, and two files with opposite audiences sitting next to each other is how the wrong one gets opened.
 
