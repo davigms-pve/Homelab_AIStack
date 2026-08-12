@@ -83,6 +83,8 @@ The running list. Items get struck through and dated when closed, not deleted.
 
 **Blocking 1.0:**
 
+*These three, and only these three, are mirrored as GitHub issues under the [`1.0` milestone](https://github.com/davigms-pve/Homelab_AIStack/milestone/1) — `G1` is [#4](https://github.com/davigms-pve/Homelab_AIStack/issues/4), `G2` is [#5](https://github.com/davigms-pve/Homelab_AIStack/issues/5), `G3` is [#6](https://github.com/davigms-pve/Homelab_AIStack/issues/6). The issues are a visibility surface for people who never open this file; the gaps here stay the record, and the issue bodies deliberately hold no content of their own. Close the issue when you strike the gap. Everything below the 1.0 section is tracked here only.*
+
 - **G1 — Get `blocks/domains/proxmox-ai-stack/` to `L3` with `unreached: none`.** This is the single biggest gap and the reason the flagship reads `L0`. Closing it means a live agent session creating a real VM with real GPU passthrough on real hardware, following only what's in the block; every command confirmed or corrected; the frontmatter and both READMEs updated to match. Needs hardware and an operator — that residue has no synthetic substitute, and it's the accepted cost of the bring-your-own-infra path.
 
    **But most of this block can climb without any of that**, which is the point of splitting the rungs — see gaps G10 and G11 for the two unblocked steps.
