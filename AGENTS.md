@@ -25,3 +25,54 @@ The **E** is the part that gets hollowed out by accident. A filled example means
 ## Full conventions
 
 See `CONTRIBUTING.md` for the Definition of Done and PR process, and `docs/methodology.md` for the operating cadences every block's `AGENTS.md.example` must follow.
+
+## Working alongside other agents (and the humans reviewing them)
+
+This repo is maintained with AI agents doing real work in it — more than
+one, sometimes concurrently. The rules below are what keep that from
+turning into a mess. They apply to **any** agent operating here, not just
+the one that happens to read this file first.
+
+**This repository is public.** A mistake merged here is visible
+immediately and may be cloned, forked, or quoted before it is reverted.
+That is the reason the merge rule below is absolute rather than
+situational.
+
+- **Never push to `main`. Never merge your own work.** Open a pull
+  request and stop there. Only the maintainer — reviewing alongside
+  Claude — merges to `main`. This holds no matter how small, obvious, or
+  self-evidently correct the change looks. It is the review step that
+  catches a plausible-looking change that is simply wrong, which is the
+  failure mode an agent produces most often and can least detect in
+  itself.
+- **If your tooling has a default workflow that ends in a merge, that
+  default does not apply here.** Some agent skills document a
+  branch → commit → PR → `gh pr merge --squash` sequence as the normal
+  end of a task. Stop at the PR. This line exists because that default is
+  real and is otherwise unopposed in this repo.
+- **One branch per contributor; one branch per agent.** Human-only work
+  goes on `<handle>/<topic>`. Agent work goes on
+  `<agent>/<handle>/<topic>` — e.g. `claude/davigms-pve/block-schema-fix`,
+  `hermes/davigms-pve/link-audit`. When a person is working *with* an
+  agent, the agent gets its own branch rather than sharing the person's,
+  so conflicts and attribution stay separable. Branches that predate this
+  convention remain valid; don't rename them.
+- **Never edit `.github/workflows/`.** `validate-blocks.yml` is the
+  mechanical half of the Definition of Done — the backstop that catches
+  what review misses. An agent that can weaken the net and then rely on
+  the weakened net in the same run has no backstop at all. Propose
+  workflow changes in an issue instead.
+- **Never force-push**, and never `rm -rf` outside your own working tree.
+- **Never grant credentials or access** to yourself or anyone else.
+- **Report honestly.** If CI fails, say so and quote it. If you skipped
+  something, say which part. A block that "looks right" is not a block
+  that was verified — this repo's whole argument is that unenforced
+  claims decay (`CONTRIBUTING.md`, "What CI checks, and what it can't").
+
+**None of this is enforced by GitHub.** There is no branch protection on
+this repo; an agent's credentials permit the push and the merge it is
+told here not to perform. These rules hold only because the agent reads
+this file and follows it. That is a deliberate choice by the maintainer —
+governance through instructions rather than through narrowed
+credentials — and it means the honesty of an agent working here is doing
+real load-bearing work, not decorative compliance.
