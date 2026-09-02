@@ -1,0 +1,48 @@
+name: issue-close-guard
+
+# Reopens any issue that GitHub's commit-message keyword scanner closed.
+#
+# Why this exists: an inbound issue here is somebody taking the trouble to
+# report what broke, and CONTRIBUTING.md ("What happens to a filed issue")
+# says the failure mode is one arriving and leaving no roadmap entry behind.
+# A keyword-triggered close is exactly that failure, silently: the issue
+# vanishes with nobody having decided anything.
+#
+# The trap is not hypothetical and convention does not stop it. In the
+# maintainer's other repos it has fired repeatedly, twice from commits that
+# were themselves documenting the trap — GitHub parses neither negation nor
+# quotation, so writing "does not fix #N" or quoting a bad title still
+# closes #N. This guard makes it structurally impossible instead.
+#
+# Mechanism: on every issue close, look up the close event. If GitHub
+# attributed a commit to it, the close came from the keyword scanner —
+# reopen and comment. Closes via the UI or API carry no commit_id and are
+# never touched, so deliberate closes are unaffected.
+
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  issues: write
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reopen if closed by a commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUM: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          commit=$(gh api "repos/$REPO/issues/$NUM/timeline" --paginate \
+            --jq '[.[] | select(.event=="closed")] | last | .commit_id // ""')
+          if [ -n "$commit" ]; then
+            short=${commit:0:7}
+            gh issue reopen "$NUM" --repo "$REPO" --comment \
+              "Reopened by issue-close-guard: this close was triggered by commit \`$short\`'s message, not by a deliberate close. Commit-keyword closes are never valid here — an issue is closed once it has been routed (a roadmap gap, or a correction landed), and that is a decision a person makes. If this really is done, close it explicitly with \`gh issue close $NUM --comment '<where it was routed>'\`."
+          else
+            echo "Close was deliberate (no commit_id) — leaving it closed."
+          fi
