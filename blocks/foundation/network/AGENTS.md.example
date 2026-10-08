@@ -7,7 +7,7 @@ evidence: n/a
 
 # Network — filled example
 
-**Status: unverified.** Not yet walked end-to-end with a real person on real hardware — see the gap list in [`../../../docs/roadmap.md`](../../../docs/roadmap.md). Treat the shape and cadence as reliable; confirm exact steps against your router/switch vendor's current docs.
+**Status: L0 — written from official documentation, never checked against anything.** See the rungs in [`../../../docs/methodology.md`](../../../docs/methodology.md). Not yet walked end-to-end with a real person on real hardware — see the gap list in [`../../../docs/roadmap.md`](../../../docs/roadmap.md). Treat the shape and cadence as reliable; confirm exact steps against your router/switch vendor's current docs.
 
 **Every value below is fake but realistic**, continuing the same fictional homelab as `blocks/foundation/host-platform/` and `blocks/domains/proxmox-ai-stack/`. To adapt it, find-and-replace using [`PLACEHOLDERS.md`](PLACEHOLDERS.md).
 

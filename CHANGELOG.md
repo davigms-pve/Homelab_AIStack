@@ -6,6 +6,16 @@ Versioning is pre-1.0 `0.x.y`. `1.0` requires at least one path dogfooded end-to
 
 ## [Unreleased]
 
+### Added (verification map, 2026-10-08)
+
+- **[`docs/verification-map.md`](docs/verification-map.md)** — for every artifact the repo ships, which rungs of the ladder can ever apply, and for the command-bearing and decision blocks, which individual checklist items each evidence environment (desk, the private deployment, nested virtualization, real hardware) can and can't reach. It exists because the rungs reach *different subsets* of a block and so don't stack: a nested-virtualization run covers the install path and misses the whole passthrough section; the private deployment covers passthrough and misses everything about bring-up; and some items came *from* that deployment, so its agreement with them is circular. Writing that down turns "get the flagship to `L3`" from one task into four with known blind spots, and gives a nested run a predicted `unreached:` list before anyone starts. **It is a prediction, not evidence** — nothing in it moves a rung — and its Private column was written without access to the deployment, so the maintainer's corrections are the first thing it needs.
+- Four-way sort of what the ladder fits: the flagship (full ladder); `host-platform`, `network`, `hardware-bringup` (partial); `agent-operations` (poor fit); `discovery/` and `start-here/` (off the ladder, on the guidance-quality axis `methodology.md` already assigns them).
+- Three gaps the sort exposed, left open rather than patched: **G15** (`agent-operations` has no vendor to desk-check against and its real test is months of adoption), **G16** (`unreached: none` is undefined for decision-layer blocks, and the `1.0` path includes two of those plus `discovery/`, which carries no rung at all — so `1.0` as written requires an `L3`/`L4` path through something that can't hold a rung), **G17** (nothing checks the map's status table against the frontmatter).
+
+### Fixed (2026-10-08)
+
+- `hardware-bringup`, `host-platform`, and `network` `AGENTS.md.example` files still opened with `**Status: unverified.**` — the pre-ladder vocabulary — while their frontmatter said `L0`. They now lead with the rung. "Every block states its rung prominently" is a `1.0` requirement, and an old label sitting beside a new one is the quiet kind of drift this repo is meant not to have.
+
 ### Added (field-lessons remediation, 2026-08-12)
 
 Source: an assessment of this repo against a real, private, single-server deployment — Proxmox, dual GPUs, local inference, operated day to day *by AI agents* for months. That deployment transfers *operating* experience, not bring-up experience, and [`docs/field-evidence.md`](docs/field-evidence.md) is the ledger recording what came from it, where each lesson was routed, and why none of it counts as verification.

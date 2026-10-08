@@ -7,7 +7,7 @@ evidence: n/a
 
 # Hardware bring-up — filled example
 
-**Status: unverified.** The protocol here was designed from a cold walkthrough that exposed this gap, not from a completed build — see [`../../../docs/roadmap.md`](../../../docs/roadmap.md). Treat the checkpoints as sound and the specific questions as a first draft.
+**Status: L0 — never walked with a real person buying real parts.** See the rungs in [`../../../docs/methodology.md`](../../../docs/methodology.md). The protocol here was designed from a cold walkthrough that exposed this gap, not from a completed build — see [`../../../docs/roadmap.md`](../../../docs/roadmap.md). Treat the checkpoints as sound and the specific questions as a first draft.
 
 **Every value below is fake but realistic**, continuing the same fictional homelab as the other blocks. To adapt it, find-and-replace using [`PLACEHOLDERS.md`](PLACEHOLDERS.md).
 

@@ -91,7 +91,7 @@ The rules, all of them mechanically checkable:
 
 ### What ships, and what 1.0 needs
 
-**L0 and L1 are legitimate pre-1.0** — but only stated out loud, in the block's own `README.md` as well as its frontmatter, with the gap tracked in [`roadmap.md`](roadmap.md). Shipping a low rung is fine; shipping one *quietly* is the thing this repo doesn't do. `1.0` requires one complete path at **L3 with `unreached: none`**, or at L4.
+**L0 and L1 are legitimate pre-1.0** — but only stated out loud, in the block's own `README.md` as well as its frontmatter, with the gap tracked in [`roadmap.md`](roadmap.md). Shipping a low rung is fine; shipping one *quietly* is the thing this repo doesn't do. `1.0` requires one complete path at **L3 with `unreached: none`**, or at L4. Which items of which block each rung can actually reach is tracked in [`verification-map.md`](verification-map.md).
 
 ### Guidance quality is a separate axis
 
