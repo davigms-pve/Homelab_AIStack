@@ -30,7 +30,7 @@ Every template here — a **block** — ships as a **Checklist + Example + Place
 
 Blocks declare what they depend on (`requires:`), so choices compose instead of contradicting each other — wanting both a media server and an AI stack changes the hardware envelope for both, and that only works if each block states its prerequisites honestly.
 
-As you go, an agent maintains two files in *your own* repo, next to your own `AGENTS.md` — `.homelab-state.yml` (machine-readable progress) and `HOMELAB.md` (a plain-language log of what was decided and why). See [`docs/manifest-schema.md`](docs/manifest-schema.md).
+As you go, an agent maintains two files in *your own* repo, next to your own `AGENTS.md` (or whichever instructions file your tool reads — see [`start-here/`](start-here/README.md)) — `.homelab-state.yml` (machine-readable progress) and `HOMELAB.md` (a plain-language log of what was decided and why). See [`docs/manifest-schema.md`](docs/manifest-schema.md).
 
 ```
 start-here/                       — hand TRAVERSAL.md to your agent; it routes everything below

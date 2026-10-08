@@ -10,7 +10,7 @@ Confirm the standing methodology agreement — step 0 of the Agent Operating Cad
 
 ## Step 1 — read state
 
-Look for `.homelab-state.yml` in the user's own repo (not this one — see [`../docs/manifest-schema.md`](../docs/manifest-schema.md)).
+Look for `.homelab-state.yml` in the user's own repo (not this one — see [`../docs/manifest-schema.md`](../docs/manifest-schema.md)). **If you have no file access, ask the person to paste `.homelab-state.yml` and `HOMELAB.md`** (or tell you they don't exist yet); the Discovery & Advisory Cadence, step 6, says how persistence works when they are the file system.
 
 - **It doesn't exist — or there's no "user's own repo" yet at all.** That's the normal first-time case: someone who owns nothing yet has nowhere for these files to live. Don't hunt for it, and don't write into *this* repo. Ask once where the two files should go, offer a default so the question is answerable in three words (a new folder in their home directory is fine), and move on. This is housekeeping and must never become a blocker. Then go to [`../discovery/needs.md`](../discovery/needs.md) and follow the Discovery & Advisory Cadence, creating both files at the first confirmed decision rather than at the end.
 - **It exists** → read it fully before proposing anything, including `HOMELAB.md` for the *why* behind past decisions. If `blocks:` shows anything at `awaiting-human`, read the `awaiting:` record — its `agent-resumes-by` field is your first action, and it exists so you don't re-interview anyone. Continue to step 2.
@@ -52,7 +52,7 @@ The tiered-path and flat-key forms are deliberately different shapes — `requir
 
 **Don't self-certify `agent_capability` and move on.** You know your own capability class, so that half is free — but `discovery/ai-tooling.md` also asks where the tool runs and what it costs, and those are the person's answers. Confirm the class with them, then record it.
 
-**If `agent_capability` is `advisory-only`, stop at the end of discovery.** Every discovery topic can be completed by an advisory-only assistant; nothing past it can. Say so plainly rather than starting a foundation block you can't finish — and because the value is recorded, a later session with an execution-capable agent knows exactly why things stopped instead of re-deriving it.
+**If `agent_capability` is `advisory-only`, stop at the end of discovery.** Every discovery topic can be completed by an advisory-only assistant, with the person saving the state files by hand; nothing past it can. Say so plainly rather than starting a foundation block you can't finish — and because the value is recorded, a later session with an execution-capable agent knows exactly why things stopped instead of re-deriving it.
 
 ## Step 3 — pick the next block
 

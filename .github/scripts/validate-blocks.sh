@@ -193,6 +193,29 @@ for topic in $(topics); do
 	check_requires "$topic"
 done
 
+# ------------------------------------------------- agent-agnostic tripwire
+#
+# Content an agent follows must describe capabilities, not products — see
+# AGENTS.md ("This repo is agent-agnostic"). This is a tripwire, not a
+# guarantee: it only knows the names listed here, so a tool added after this
+# list was written passes silently. Review has to catch the rest, and anyone
+# who spots a missing name should add it.
+#
+# Scoped to what an agent is handed (blocks/, discovery/, start-here/).
+# Deliberately NOT scanned: CLAUDE.md, AGENTS.md, CHANGELOG.md and docs/,
+# where naming a tool is the point (a pointer file, the branch-naming
+# example, release history).
+
+agent_names='Claude|Anthropic|ChatGPT|OpenAI|Codex|Gemini|Copilot|Cursor|Windsurf|Cline|Aider|Hermes'
+
+while IFS= read -r hit; do
+	[ -n "$hit" ] && fail "${hit%%:*}" "line ${hit#*:} names a specific AI tool — describe the capability instead (AGENTS.md, \"agent-agnostic\")"
+done < <(
+	for f in $(find blocks discovery start-here -type f -name '*.md*' 2>/dev/null | sort); do
+		clean "$f" | grep -n -w -E "$agent_names" | sed "s#^\([0-9]*\):.*#$f:\1#"
+	done
+)
+
 # ------------------------------------------------------------------- report
 
 if [ "$problems" -gt 0 ]; then

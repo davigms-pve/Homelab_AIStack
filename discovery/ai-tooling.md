@@ -15,11 +15,11 @@ This is the one discovery topic that's a little different: the person needs *an 
 
 ## Example
 
-*Illustrative only — named as examples of each capability class, not a recommendation ranking. Check current offerings before relying on specifics, since this list is the part of the repo most likely to age.*
+*Described by what each class can do, never by product — the products change faster than this repo can track, and naming one here would read as a pick. Match whatever tool the person has against the class, not the other way round.*
 
-- **Shell/host-capable agents (terminal-native):** tools like Claude Code or similar CLI-based coding agents that can execute commands and edit files directly.
-- **IDE-integrated agents:** tools like Cursor or Windsurf that combine an editor with an agent that can run commands within a project.
-- **Chat-only assistants:** a general-purpose chat interface with no execution ability — fine for discovery, not sufficient once a block moves into the Agent Operating Cadence.
+- **Shell/host-capable agents (terminal-native):** a command-line coding agent that can execute commands and edit files directly.
+- **IDE-integrated agents:** an editor with an agent built in that can run commands within a project.
+- **Chat-only assistants:** a general-purpose chat interface with no execution ability and, usually, no file access — fine for discovery, with the person acting as the file system (see step 6 of the Discovery & Advisory Cadence in `docs/methodology.md`), and not sufficient once a block moves into the Agent Operating Cadence.
 
 ## Output
 

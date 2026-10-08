@@ -12,6 +12,13 @@ Point your agent at [`TRAVERSAL.md`](TRAVERSAL.md) and let it take over from the
 
 You don't need to read it yourself first, though nothing stops you — it's short. It ends by handing off to whichever block comes next, so a fresh session picks up where the last one stopped rather than re-interviewing you.
 
+## Works with any agent — and what to do when yours is different
+
+Nothing in this repo depends on a particular AI tool. It's plain Markdown and plain YAML, with no tool-specific commands, plugins, or syntax, so any assistant that can follow written instructions can use it. Two practical differences between tools are worth knowing:
+
+- **Which instructions file your agent reads.** Here, and in the files your agent creates for your own homelab repo, the instructions live in `AGENTS.md` — the most widely shared convention. Some tools read a differently named file instead. If yours does, don't copy the contents: create the file your tool reads and put one line in it saying "the instructions for this repo are in `AGENTS.md`; read that." This repo does exactly that with its own `CLAUDE.md`. One copy of the rules means nothing drifts.
+- **Whether your assistant can open files at all.** A chat-only assistant can't read this repo or write your state files. Paste `TRAVERSAL.md` into the conversation and paste the others as it asks for them; it will hand you the contents of `.homelab-state.yml` and `HOMELAB.md` to save yourself, and ask for them back next session. That's enough to finish discovery. Doing anything to a real machine needs an agent that can run commands — see [`../discovery/ai-tooling.md`](../discovery/ai-tooling.md).
+
 ## Why this exists as its own folder
 
 Without it, an agent handed this repo has to *infer* the order — that discovery comes before the foundation blocks, that all four foundation blocks come before any domain block, that they run in a particular order, and that a half-finished decision is worse than an unstarted one. Inferring works right up until it doesn't, usually somewhere expensive.
