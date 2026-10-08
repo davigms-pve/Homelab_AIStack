@@ -17,6 +17,7 @@ Items marked *(CI)* are checked automatically by `.github/workflows/validate-blo
 - [ ] The rung is also stated in plain words in the block's `README.md`
 - [ ] No real IPs, hostnames, tokens, or serial numbers — fake-but-realistic values only
 - [ ] Any hardware/tooling guidance states criteria, not brand rankings or specific picks
+- [ ] Nothing an agent is told to do depends on one AI tool's features (*CI* catches known product names only; the rest is review)
 - [ ] Any link to a runnable stack points at an official/vendor source, not a third-party reimplementation
 
 ## Validation

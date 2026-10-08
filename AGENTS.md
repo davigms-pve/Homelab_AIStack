@@ -22,6 +22,9 @@ The **E** is the part that gets hollowed out by accident. A filled example means
 - `docs/methodology.md` is the single source for the Discovery & Advisory Cadence and the Agent Operating Cadence. Reference it from blocks; never restate it.
 - `DISCLAIMER.md` states the risk this whole methodology exists to manage, and the Agent Operating Cadence's step 0 (standing methodology agreement) applies regardless of harness auto-approval settings. Don't weaken either without understanding why they're there.
 
+- **This repo is agent-agnostic, and the content must stay that way.** Nothing a block, discovery topic, or `start-here/` file tells an agent to do may depend on one tool's features — no slash commands, skills, plugins, hooks, tool-server protocols, permission modes, or product names. Describe a *capability* ("an agent that can run shell commands") rather than a tool. A new block that only works in one agent has quietly become that agent's block. `validate-blocks.sh` checks for a list of known product names in agent-facing content; that is a tripwire, not a guarantee, since it can't know tools it hasn't been told about — review has to catch the rest.
+- **`AGENTS.md` is the one canonical instructions file; a tool-specific filename is only ever a pointer.** `CLAUDE.md` exists because one tool reads that name and nothing else, and says so. If another tool needs the same, add the same kind of one-line pointer file — never a second copy of the rules, which is how two instruction files come to disagree.
+
 ## Full conventions
 
 See `CONTRIBUTING.md` for the Definition of Done and PR process, and `docs/methodology.md` for the operating cadences every block's `AGENTS.md.example` must follow.
@@ -40,7 +43,7 @@ situational.
 
 - **Never push to `main`. Never merge your own work.** Open a pull
   request and stop there. Only the maintainer — reviewing alongside
-  Claude — merges to `main`. This holds no matter how small, obvious, or
+  whatever AI review assistance they use — merges to `main`. This holds no matter how small, obvious, or
   self-evidently correct the change looks. It is the review step that
   catches a plausible-looking change that is simply wrong, which is the
   failure mode an agent produces most often and can least detect in

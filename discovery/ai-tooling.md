@@ -15,11 +15,20 @@ This is the one discovery topic that's a little different: the person needs *an 
 
 ## Example
 
-*Illustrative only — named as examples of each capability class, not a recommendation ranking. Check current offerings before relying on specifics, since this list is the part of the repo most likely to age.*
+Continuing the persona from `needs.md` (wants AI stack primary, media later, ~$800, apartment, quiet, has used Docker a little). A worked, fictional conversation outcome — what a completed pass looks like, not a transcript to copy. Tools are described by what they can do, never by product: products change faster than this repo can track, and naming one would read as a pick.
 
-- **Shell/host-capable agents (terminal-native):** tools like Claude Code or similar CLI-based coding agents that can execute commands and edit files directly.
-- **IDE-integrated agents:** tools like Cursor or Windsurf that combine an editor with an agent that can run commands within a project.
-- **Chat-only assistants:** a general-purpose chat interface with no execution ability — fine for discovery, not sufficient once a block moves into the Agent Operating Cadence.
+> **What they already use:** a general-purpose AI assistant in a terminal on their everyday laptop, on a monthly subscription. It can run commands and edit files in a folder they point it at. They'd assumed they'd have to install it "on the server" and were relieved to hear they don't.
+> **Where it lives vs. what it operates on:** said unprompted — the agent runs on the laptop; the server will be a headless box in the closet that the laptop reaches over the home network. Nothing gets installed onto the server to make the agent work, and the laptop only has to be on the same network. They hadn't realised their older laptop would be fine for that.
+> **Cost model:** subscription, already paid for — no new line item against the ~$800 hardware budget.
+> **Class, confirmed with them:** the agent knows it can execute commands, so `shell-capable` was proposed and they agreed — including what that means in practice: it proposes each state-changing command and waits for a yes, rather than running unattended.
+
+This maps into `.homelab-state.yml` as the single key described under Output:
+```yaml
+decisions:
+  agent_capability: shell-capable
+```
+
+*The other classes, by capability: an **IDE-integrated** agent is an editor with an agent inside it that can run commands in a project — treat it as `shell-capable`. A **chat-only** assistant has no execution ability and usually no file access; it would record `advisory-only`. Discovery still completes with the person saving the two state files by hand (step 6 of the Discovery & Advisory Cadence in `docs/methodology.md`), and the session stops there — see `start-here/TRAVERSAL.md`.*
 
 ## Output
 
