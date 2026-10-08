@@ -28,7 +28,7 @@ New categories are welcome — see `docs/roadmap.md` for what's already planned.
 
 ## What CI checks, and what it can't
 
-`.github/workflows/validate-blocks.yml` runs on every push and pull request. It enforces the mechanically checkable half of the list above: every block has its four files, every `AGENTS.md.example` carries well-formed verification frontmatter whose fields agree with its rung, no `<<TOKEN>>` placeholder survives in a filled example, every `requires:` name resolves to a block or discovery topic that exists, and agent-facing content (`blocks/`, `discovery/`, `start-here/`) names no specific AI product.
+`.github/workflows/validate-blocks.yml` runs on every push and pull request. It enforces the mechanically checkable half of the list above: every block has its four files, every `AGENTS.md.example` carries well-formed verification frontmatter whose fields agree with its rung, no `<<TOKEN>>` placeholder survives in a filled example, every `requires:` name resolves to a block or discovery topic that exists, and the content an agent follows (`blocks/`, `discovery/`, `start-here/`, plus `docs/methodology.md` and the two schemas) names no specific AI product.
 
 This split is deliberate, and it comes from field experience: **a rule that isn't mechanically enforced gets broken by a future contributor, or a future session, no matter how prominently it's written down.** Everything above that a machine can check, a machine checks. What's left for human review is genuinely judgment — whether the example *reads* as a finished file, whether the checklist would actually let an agent finish the job, whether guidance stayed criteria rather than picks. Don't add checklist items that a script could enforce; write the script instead.
 

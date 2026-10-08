@@ -201,17 +201,27 @@ done
 # list was written passes silently. Review has to catch the rest, and anyone
 # who spots a missing name should add it.
 #
-# Scoped to what an agent is handed (blocks/, discovery/, start-here/).
-# Deliberately NOT scanned: CLAUDE.md, AGENTS.md, CHANGELOG.md and docs/,
-# where naming a tool is the point (a pointer file, the branch-naming
-# example, release history).
+# Scoped to what an agent is handed and told to follow: blocks/, discovery/,
+# start-here/, and the three docs that TRAVERSAL.md sends it into to act —
+# the methodology (both cadences) and the two schemas.
+#
+# Deliberately NOT scanned: AGENTS.md and CLAUDE.md (a pointer file and a
+# branch-naming example name tools on purpose), CHANGELOG.md and
+# docs/roadmap.md (release history and gap records), and the rest of docs/
+# (rationale for humans, not instructions).
+#
+# The match is case-sensitive and whole-word, so the all-caps filename
+# `CLAUDE.md` in start-here/README.md passes (it's `CLAUDE`, not `Claude`). That is a deliberate gap: it is
+# the legitimate pointer-file example, and a case-insensitive scan would
+# flag ordinary words ("cursor", "cline").
 
 agent_names='Claude|Anthropic|ChatGPT|OpenAI|Codex|Gemini|Copilot|Cursor|Windsurf|Cline|Aider|Hermes'
 
 while IFS= read -r hit; do
 	[ -n "$hit" ] && fail "${hit%%:*}" "line ${hit#*:} names a specific AI tool — describe the capability instead (AGENTS.md, \"agent-agnostic\")"
 done < <(
-	for f in $(find blocks discovery start-here -type f -name '*.md*' 2>/dev/null | sort); do
+	for f in $(find blocks discovery start-here -type f -name '*.md*' 2>/dev/null | sort) \
+		docs/methodology.md docs/manifest-schema.md docs/block-schema.md; do
 		clean "$f" | grep -n -w -E "$agent_names" | sed "s#^\([0-9]*\):.*#$f:\1#"
 	done
 )

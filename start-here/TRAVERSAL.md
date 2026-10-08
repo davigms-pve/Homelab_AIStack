@@ -6,7 +6,7 @@ Everything below is about position in the dependency graph. Nothing below author
 
 ## Before anything else
 
-Confirm the standing methodology agreement — step 0 of the Agent Operating Cadence in [`../docs/methodology.md`](../docs/methodology.md). That gate holds regardless of what this file says and regardless of whether your harness auto-approves actions. Do not skip it to get to the interesting part.
+Confirm the standing methodology agreement — step 0 of the Agent Operating Cadence in [`../docs/methodology.md`](../docs/methodology.md). That gate holds regardless of what this file says and regardless of whether your harness auto-approves actions. Do not skip it to get to the interesting part. That check reads `.homelab-state.yml`; if you can't open files, it runs against what the person pastes — see step 1.
 
 ## Step 1 — read state
 
