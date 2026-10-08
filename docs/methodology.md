@@ -91,11 +91,23 @@ The rules, all of them mechanically checkable:
 
 ### What ships, and what 1.0 needs
 
-**L0 and L1 are legitimate pre-1.0** — but only stated out loud, in the block's own `README.md` as well as its frontmatter, with the gap tracked in [`roadmap.md`](roadmap.md). Shipping a low rung is fine; shipping one *quietly* is the thing this repo doesn't do. `1.0` requires one complete path at **L3 with `unreached: none`**, or at L4. Which items of which block each rung can actually reach is tracked in [`verification-map.md`](verification-map.md).
+**L0 and L1 are legitimate pre-1.0** — but only stated out loud, in the block's own `README.md` as well as its frontmatter, with the gap tracked in [`roadmap.md`](roadmap.md). Shipping a low rung is fine; shipping one *quietly* is the thing this repo doesn't do. `1.0` has two gates, defined under [The two gates for `1.0`](#the-two-gates-for-10) below — the rungs alone can't carry it, because not everything on the path can hold one. Which items of which block each rung can actually reach is tracked in [`verification-map.md`](verification-map.md).
 
 ### Guidance quality is a separate axis
 
 The rungs measure whether a block's *content* is correct. They say nothing about whether an agent handed `start-here/TRAVERSAL.md` actually routes a real person well — asks the right questions in the right order, notices a missing block, produces the manifest files. That needs a cold reader, not cold hardware, and it's testable today at no cost: hand the traversal to a fresh session with a novice persona and record where it gets lost. **The transcript is the evidence artifact**, and the defects it finds are tracked in `roadmap.md` rather than in any block's frontmatter — `discovery/` and `start-here/` carry no rung, because they have no commands to be wrong about.
+
+**What else sits on this axis.** `agent-operations/` and the decision-layer blocks (`host-platform/`, `network/`) still carry a frontmatter rung, because CI requires one — but that rung only measures the part of them that can be checked against a document. Their real test is here. For `agent-operations/` the long-run evidence is *adoption*: a dated record from a real repo that took on its state-file contract, showing whether the rules held across sessions. That record is not a rung and is not required before `1.0`; the contract is a claim about months, and a one-session walkthrough shows only that its shape is right.
+
+### The two gates for `1.0`
+
+*Decided 2026-10-08.* `1.0` needs both of these. Neither substitutes for the other, because they test different things on different artifacts.
+
+**Content gate — do the commands work?** One complete path, discovery → all four foundation blocks → a domain block, executed on real hardware to **`L3` with `unreached: none`**, or reproduced at **`L4`**. Command-bearing steps in the earlier blocks on that path (bridge creation in `network/`, the platform install in `hardware-bringup/`) are executed by that run and named in its run record; they don't need a rung of their own. Nested virtualization does not satisfy this gate, for the reason given under `L3` above.
+
+**Guidance gate — does the helper route a real person well?** A walkthrough, with a real person who did not write the content, covering `discovery/`, `start-here/`, `host-platform/`, `network/`, `hardware-bringup/`, and one session of `agent-operations/` (its two questions and the finding-routing rule). One person may walk the whole path in a single pass. The transcript is the artifact. The gate is met when the walk reaches the recorded `decisions:` values and every defect it surfaced is fixed or tracked as a gap in `roadmap.md`. Persona walkthroughs played by an agent session are useful and stay on file, but they don't meet this gate — a cold reader who is actually cold does.
+
+A block can be in both gates; `hardware-bringup/` is, since its protocol is guidance and its steps are physical. `1.0` additionally requires the task-completion test (see `roadmap.md`) to pass and every block to state its rung prominently.
 
 See `CONTRIBUTING.md` for the Definition of Done these map to.
 

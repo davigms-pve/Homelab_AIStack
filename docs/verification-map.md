@@ -4,7 +4,7 @@
 
 It exists because the rungs do not stack neatly. A desk-check, a read-through against a running server, a nested-virtualization run, and a real-hardware run each reach a *different subset* of a block. Without writing that down, "get the flagship to `L3`" reads as one task, and it is really four environments with four different blind spots — which is how work stalls on the hard one while the cheap ones sit unstarted.
 
-**Everything on this page is a prediction.** Nothing here moves any block up the ladder, changes any frontmatter, or counts as evidence. A cell saying a rung *can* reach an item is a claim about the environment, to be confirmed or corrected by the run that produces the real evidence artifact. *Last reviewed: 2026-10-08.*
+**Everything on this page is a prediction.** Nothing here moves any block up the ladder, changes any frontmatter, or counts as evidence. A cell saying a rung *can* reach an item is a claim about the environment, to be confirmed or corrected by the run that produces the real evidence artifact. *Last reviewed: 2026-10-08.* The two `1.0` gates this page refers to are defined in [`methodology.md`](methodology.md#the-two-gates-for-10).
 
 ## The four environments
 
@@ -22,10 +22,10 @@ It exists because the rungs do not stack neatly. A desk-check, a read-through ag
 | Artifact | Category | Why |
 |---|---|---|
 | `blocks/domains/proxmox-ai-stack/` | **Full ladder** | Command-bearing, hardware-dependent, destructive. Every rung applies, though no single environment reaches all of it. |
-| `blocks/foundation/host-platform/` | **Partial** | A decision layer. `L1` applies only to its few checkable factual claims, `L3` has no obvious meaning (see [G16](roadmap.md)), and `L2` reaches one platform branch of five. |
+| `blocks/foundation/host-platform/` | **Partial** | A decision layer. `L1` applies only to its few checkable factual claims, `L3` has no meaning for a decision, so its top-level evidence is the guidance gate, and `L2` reaches one platform branch of five. |
 | `blocks/foundation/network/` | **Partial** | A decision layer with one execution piece — Proxmox bridge creation. That piece climbs the ladder; the segmentation decisions do not. |
 | `blocks/foundation/hardware-bringup/` | **Partial, and unusually so** | Deliberately thin: it points at manuals instead of containing procedure, so there is little for `L1` to read. `L2` is impossible. Its meaningful rungs are the top ones, and they need a real purchase. |
-| `blocks/foundation/agent-operations/` | **Poor fit** | No vendor for `L1` to read against; its real test is adoption over months, which no rung describes. Tracked as [G15](roadmap.md) rather than patched here. |
+| `blocks/foundation/agent-operations/` | **Guidance axis (adoption)** | No vendor for `L1` to read against; its real test is adoption over months, which no rung describes. Decided 2026-10-08 (formerly G15): it sits on the guidance-quality axis, not the ladder. |
 | `discovery/` (three topics) and `start-here/` | **Off the ladder** | No commands to be wrong about. [`methodology.md`](methodology.md) already assigns them the guidance-quality axis, with a transcript as the evidence artifact. This page does not invent a rung for them. |
 
 Not artifacts but worth saying: `docs/` is specification, not instruction — its correctness is whether the things built on it hold together, which the walkthroughs and CI exercise. And `.github/scripts/validate-blocks.sh` is the one thing in this repo that is fully executable and testable end to end; it is also what every claim on the ladder leans on.
@@ -121,7 +121,7 @@ Mapped differently, because the rungs fit badly.
 | Maintenance pass, both drift directions | no | part | no | no | Needs the passage of months to show either direction. |
 | "Write for the weakest session" | no | no | no | no | Shown only by weak sessions actually following it. |
 
-Almost none of this is reached by any single-run environment. The Private deployment is both its source and its only test, which is why `field-evidence.md` refuses to count it. See [G15](roadmap.md).
+Almost none of this is reached by any single-run environment. The Private deployment is both its source and its only test, which is why `field-evidence.md` refuses to count it. Its long-run evidence is an adoption record on the guidance-quality axis (see `methodology.md`); one walkthrough session is what `1.0` needs.
 
 ## What the whole picture says
 
@@ -146,14 +146,14 @@ The consequence for sequencing is the one the roadmap already implies, now with 
 
 *The frontmatter in each block's `AGENTS.md.example` is authoritative for the rung; this table can drift from it, and nothing yet checks that it hasn't ([G17](roadmap.md)).*
 
-| Artifact | Category | Rung today | Next reachable | Via | Blocked on |
-|---|---|---|---|---|---|
-| `proxmox-ai-stack` | Full ladder | `L0` | `L1` | G10 | nothing |
-| `host-platform` | Partial | `L0` | `L1` (thin), `L2` (one branch) | G10, G11 | nothing |
-| `network` | Partial | `L0` | `L1`, `L3`-Nested for bridge creation | G10, G12 | nothing |
-| `hardware-bringup` | Partial | `L0` | `L1` (thin); real evidence needs a build | G10, G2 | a real purchase |
-| `agent-operations` | Poor fit | `L0` | undefined — see G15 | G15 | maintainer's call on the ladder |
-| `discovery/*` | Off the ladder | n/a | transcript on the guidance axis | G3 | a cold reader |
-| `start-here/` | Off the ladder | n/a | transcript on the guidance axis | G2, G3 | a cold reader |
+| Artifact | Category | Rung today | Next reachable | Via | `1.0` gate | Blocked on |
+|---|---|---|---|---|---|---|
+| `proxmox-ai-stack` | Full ladder | `L0` | `L1` | G10 | content | nothing |
+| `host-platform` | Partial | `L0` | `L1` (thin), `L2` (one branch) | G10, G11 | guidance | nothing |
+| `network` | Partial | `L0` | `L1`, `L3`-Nested for bridge creation | G10, G12 | guidance; bridge creation runs inside the content gate | nothing |
+| `hardware-bringup` | Partial | `L0` | `L1` (thin); real evidence needs a build | G10, G2 | both | a real purchase |
+| `agent-operations` | Guidance axis | `L0` | one walkthrough session; adoption record later | G2 | guidance (one session) | a cold reader |
+| `discovery/*` | Off the ladder | n/a | transcript on the guidance axis | G3 | guidance | a cold reader |
+| `start-here/` | Off the ladder | n/a | transcript on the guidance axis | G2, G3 | guidance | a cold reader |
 
 **To update this table when something moves:** change the frontmatter and the block's `README.md` first (CI checks the README mentions the frontmatter's rung — a weak check: it passes if the string appears anywhere, so it won't catch a README that names the wrong rung alongside the right one), then this row, then metric 2 in `roadmap.md`. If a pass finds a cell above was wrong, correct the cell and say so in the commit — a prediction that turns out wrong is the useful outcome, the same way a divergence is the product of `L2`.
