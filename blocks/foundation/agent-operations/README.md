@@ -48,3 +48,5 @@ What it isn't is a free skip. Every later session writes to `.homelab-state.yml`
 **Rung L0 — never run.** See the ladder in `docs/methodology.md`.
 
 One honest note specific to this block: its content comes from a real deployment operated by AI agents for months (see `docs/field-evidence.md`), which is stronger provenance than the other blocks have — and provenance is not a rung. Nobody has yet adopted this contract in a fresh repo and reported back on whether it holds there. Until someone does, `L0` is the truthful label, however well-sourced the rules are.
+
+The ladder fits this block poorly — there is no vendor to desk-check it against, and its real test is whether the contract holds across months of sessions. So its meaningful evidence sits on the guidance-quality axis, not the rungs; see "Guidance quality is a separate axis" in `docs/methodology.md`.
